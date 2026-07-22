@@ -7,6 +7,7 @@ import {
   formatDate,
   usePaymentsModuleEnabled,
   useStripeConnected,
+  isOwnedByClient,
 } from "@/lib/crm/hooks";
 import type { Invoice } from "@/lib/crm/types";
 import { Input } from "@/components/ui/input";
