@@ -17,6 +17,7 @@ import {
   Download, Upload, Search, Filter, FolderKanban, CheckCircle2, Clock, AlertTriangle,
 } from "lucide-react";
 import { ExportMenu } from "@/components/crm/ExportMenu";
+import { ImportDialog } from "@/components/crm/ImportDialog";
 
 const STATUSES = ["brief", "in_progress", "review", "delivered"] as const;
 type Status = typeof STATUSES[number];
@@ -95,41 +96,23 @@ function ProjectsPage() {
     { key: "createdAt", label: "Created" },
   ];
 
-  const importProjects = async (file: File) => {
-    try {
-      const text = await file.text();
-      let rows: any[] = [];
-      if (file.name.endsWith(".json")) {
-        const parsed = JSON.parse(text);
-        rows = Array.isArray(parsed) ? parsed : [parsed];
-      } else {
-        const lines = text.split(/\r?\n/).filter(Boolean);
-        const headers = lines[0].split(",").map((h) => h.trim());
-        rows = lines.slice(1).map((line) => {
-          const cols = line.split(",");
-          const o: any = {};
-          headers.forEach((h, i) => (o[h] = cols[i]?.trim()));
-          return o;
-        });
-      }
-      let count = 0;
-      for (const r of rows) {
-        if (!r.name) continue;
-        addProject({
-          name: r.name,
-          brief: r.brief,
-          companyId: r.companyId,
-          contactId: r.contactId,
-          status: (STATUSES as readonly string[]).includes(r.status) ? r.status : "brief",
-          deadline: r.deadline,
-          tags: Array.isArray(r.tags) ? r.tags : [],
-        } as any);
-        count++;
-      }
-      alert(`Imported ${count} project${count === 1 ? "" : "s"}.`);
-    } catch (e) {
-      alert("Import failed: " + (e instanceof Error ? e.message : "invalid file"));
+  const importProjectRows = (rows: Record<string, string>[]) => {
+    let count = 0;
+    for (const r of rows) {
+      if (!r.name) continue;
+      const status = (STATUSES as readonly string[]).includes(r.status) ? (r.status as Status) : "brief";
+      addProject({
+        name: r.name,
+        brief: r.brief || undefined,
+        companyId: r.companyId || undefined,
+        contactId: r.contactId || undefined,
+        status,
+        deadline: r.deadline || undefined,
+        tags: r.tags ? r.tags.split(/[;|]/).map((t) => t.trim()).filter(Boolean) : [],
+      } as any);
+      count++;
     }
+    return count;
   };
 
   if (!can) return <NoAccess module="Projects" />;
@@ -141,21 +124,30 @@ function ProjectsPage() {
         subtitle={`${projects.length} in flight`}
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} className="font-bold">
-              <Upload className="h-3.5 w-3.5" /> Import
-            </Button>
+            <ImportDialog
+              entityLabel="projects"
+              triggerLabel="Import CSV"
+              fields={[
+                { key: "name", label: "Name", required: true },
+                { key: "brief", label: "Brief" },
+                { key: "status", label: "Status (brief|in_progress|review|delivered)" },
+                { key: "deadline", label: "Deadline (YYYY-MM-DD)" },
+                { key: "companyId", label: "Company ID" },
+                { key: "contactId", label: "Contact ID" },
+                { key: "tags", label: "Tags (; separated)" },
+              ]}
+              sample={[{
+                name: "Website Redesign", brief: "Rebrand + new marketing site",
+                status: "in_progress", deadline: "2026-08-01",
+                companyId: "", contactId: "", tags: "design;web",
+              }]}
+              onImport={importProjectRows}
+            />
             <ExportMenu
               filenameBase="projects"
               title="MetaEdge Creatives — Projects"
               rows={filtered}
               columns={PROJECT_COLS}
-            />
-            <input
-              ref={fileRef}
-              type="file"
-              accept=".json,.csv"
-              className="hidden"
-              onChange={(e) => { const f = e.target.files?.[0]; if (f) importProjects(f); e.target.value = ""; }}
             />
             <NewProjectLink />
           </div>

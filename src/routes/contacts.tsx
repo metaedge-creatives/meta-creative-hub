@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Download, Upload, Search, Filter, Users, Building2, Mail, CalendarPlus } from "lucide-react";
 import { ExportMenu } from "@/components/crm/ExportMenu";
+import { ImportDialog } from "@/components/crm/ImportDialog";
 
 const EMPTY_ARR: any[] = [];
 const APP_MODULES = [
@@ -100,43 +101,24 @@ function ContactsPage() {
     { key: "createdAt", label: "Created" },
   ];
 
-  const importClients = async (file: File) => {
-    try {
-      const text = await file.text();
-      let rows: any[] = [];
-      if (file.name.endsWith(".json")) {
-        const parsed = JSON.parse(text);
-        rows = Array.isArray(parsed) ? parsed : [parsed];
-      } else {
-        // simple CSV: name,email,category,...
-        const lines = text.split(/\r?\n/).filter(Boolean);
-        const headers = lines[0].split(",").map((h) => h.trim());
-        rows = lines.slice(1).map((line) => {
-          const cols = line.split(",");
-          const obj: any = {};
-          headers.forEach((h, i) => (obj[h] = cols[i]?.trim()));
-          return obj;
-        });
-      }
-      let count = 0;
-      for (const r of rows) {
-        if (!r.name && !r.company && !r.companyName) continue;
-        addCompany({
-          name: (r.name || r.company || r.companyName || "").trim(),
-          email: r.email,
-          firstName: r.firstName,
-          lastName: r.lastName,
-          category: r.category || "Default",
-          industry: r.industry,
-          website: r.website,
-          notes: r.notes,
-        } as any);
-        count++;
-      }
-      alert(`Imported ${count} client${count === 1 ? "" : "s"}.`);
-    } catch (e) {
-      alert("Import failed: " + (e instanceof Error ? e.message : "invalid file"));
+  const importClientsRows = (rows: Record<string, string>[]) => {
+    let count = 0;
+    for (const r of rows) {
+      const name = (r.name || r.company || r.companyName || "").trim();
+      if (!name) continue;
+      addCompany({
+        name,
+        email: r.email || undefined,
+        firstName: r.firstName || undefined,
+        lastName: r.lastName || undefined,
+        category: r.category || "Default",
+        industry: r.industry || undefined,
+        website: r.website || undefined,
+        notes: r.notes || undefined,
+      } as any);
+      count++;
     }
+    return count;
   };
 
   if (!can) return <NoAccess module="Contacts" />;
@@ -148,21 +130,30 @@ function ContactsPage() {
         subtitle="Companies and the people behind them."
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} className="font-bold">
-              <Upload className="h-3.5 w-3.5" /> Import
-            </Button>
+            <ImportDialog
+              entityLabel="clients"
+              triggerLabel="Import CSV"
+              fields={[
+                { key: "name", label: "Name", required: true },
+                { key: "email", label: "Email" },
+                { key: "firstName", label: "First Name" },
+                { key: "lastName", label: "Last Name" },
+                { key: "category", label: "Category" },
+                { key: "industry", label: "Industry" },
+                { key: "website", label: "Website" },
+                { key: "notes", label: "Notes" },
+              ]}
+              sample={[{
+                name: "Acme Inc", email: "hello@acme.com", firstName: "Ada", lastName: "Lovelace",
+                category: "Retainer", industry: "SaaS", website: "https://acme.com", notes: "",
+              }]}
+              onImport={importClientsRows}
+            />
             <ExportMenu
               filenameBase="clients"
               title="MetaEdge Creatives — Clients"
               rows={filteredCompanies}
               columns={CLIENT_COLS}
-            />
-            <input
-              ref={fileRef}
-              type="file"
-              accept=".json,.csv"
-              className="hidden"
-              onChange={(e) => { const f = e.target.files?.[0]; if (f) importClients(f); e.target.value = ""; }}
             />
             <NewContactDialog />
             <NewCompanyDialog />
