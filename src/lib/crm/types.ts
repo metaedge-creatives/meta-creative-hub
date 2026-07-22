@@ -476,6 +476,7 @@ export interface CRMState {
   serviceRequests: ServiceRequest[];
   clientReports: ClientReport[];
   exportHistory: ExportRecord[];
+  consultationBookings: ConsultationBooking[];
 }
 
 export interface ExportRecord {
