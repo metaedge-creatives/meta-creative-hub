@@ -681,6 +681,55 @@ export const useCRM = create<CRMState & Actions>()(
           ].slice(0, 200),
         }));
       },
+
+      addServiceRequest: (r) => {
+        const item: ServiceRequest = {
+          ...r,
+          id: uid(),
+          status: r.status ?? "new",
+          createdAt: new Date().toISOString(),
+        };
+        set((s) => ({ serviceRequests: [item, ...s.serviceRequests] }));
+        get().addNotification({
+          kind: "system",
+          title: "New service request",
+          body: `${item.clientName} · ${item.title}`,
+          link: "/proposals",
+        });
+        return item;
+      },
+      updateServiceRequest: (id, patch) =>
+        set((s) => ({
+          serviceRequests: s.serviceRequests.map((r) => (r.id === id ? { ...r, ...patch } : r)),
+        })),
+      setServiceRequestStatus: (id, status) =>
+        set((s) => ({
+          serviceRequests: s.serviceRequests.map((r) => (r.id === id ? { ...r, status } : r)),
+        })),
+      deleteServiceRequest: (id) =>
+        set((s) => ({ serviceRequests: s.serviceRequests.filter((r) => r.id !== id) })),
+
+      addClientReport: (r) => {
+        const item: ClientReport = {
+          ...r,
+          id: uid(),
+          createdAt: new Date().toISOString(),
+        };
+        set((s) => ({ clientReports: [item, ...s.clientReports] }));
+        get().addNotification({
+          kind: "system",
+          title: "New client report",
+          body: `${item.clientName} · ${item.title}`,
+          link: "/reports",
+        });
+        return item;
+      },
+      updateClientReport: (id, patch) =>
+        set((s) => ({
+          clientReports: s.clientReports.map((r) => (r.id === id ? { ...r, ...patch } : r)),
+        })),
+      deleteClientReport: (id) =>
+        set((s) => ({ clientReports: s.clientReports.filter((r) => r.id !== id) })),
     }),
     { name: "metaedge-crm-v6" },
   ),
