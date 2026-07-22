@@ -572,6 +572,8 @@ export const useCRM = create<CRMState & Actions>()(
         set((s) => ({
           clientUsers: s.clientUsers.map((c) => (c.id === id ? { ...c, ...patch } : c)),
         }));
+        const updated = get().clientUsers.find((c) => c.id === id);
+        if (updated) void pushClientUser(updated);
         get().addNotification({
           kind: "system",
           title: "Invite resent",
@@ -579,6 +581,12 @@ export const useCRM = create<CRMState & Actions>()(
           link: "/customers/client-users",
         });
         return { ok: true, user: { ...user, ...patch } };
+      },
+
+      hydrateClientUsersFromCloud: async () => {
+        const remote = await fetchAllClientUsers();
+        if (!remote) return;
+        set((s) => ({ clientUsers: mergeClientUsers(s.clientUsers, remote) }));
       },
 
       clientSignup: (input) => {
