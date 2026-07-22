@@ -433,3 +433,13 @@
   color: var(--maroon);
   font-weight: 700;
 }
+
+/* Panel swap animations (client <-> team login) */
+@keyframes swap-out-left { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-110%); opacity: 0; } }
+@keyframes swap-out-right { from { transform: translateX(0); opacity: 1; } to { transform: translateX(110%); opacity: 0; } }
+@keyframes swap-in-from-left { from { transform: translateX(-110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes swap-in-from-right { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.swap-out-left { animation: swap-out-left 420ms cubic-bezier(.7,0,.3,1) forwards; }
+.swap-out-right { animation: swap-out-right 420ms cubic-bezier(.7,0,.3,1) forwards; }
+.swap-in-left { animation: swap-in-from-left 520ms cubic-bezier(.2,.7,.2,1) both; }
+.swap-in-right { animation: swap-in-from-right 520ms cubic-bezier(.2,.7,.2,1) both; }

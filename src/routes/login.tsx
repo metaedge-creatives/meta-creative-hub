@@ -37,10 +37,31 @@ function LoginPage() {
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
+  const [phase, setPhase] = useState<"idle" | "enter" | "exit-to-portal">("idle");
+  const [mirror, setMirror] = useState(false); // when true: form on LEFT, brand on RIGHT
 
   useEffect(() => {
     if (user) navigate({ to: "/" });
   }, [user, navigate]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem("mec.swap") === "to-login") {
+      sessionStorage.removeItem("mec.swap");
+      setRole("team");
+      setMirror(true);
+      setPhase("enter");
+      const t = setTimeout(() => setPhase("idle"), 560);
+      return () => clearTimeout(t);
+    }
+  }, []);
+
+  const goClient = () => {
+    if (phase === "exit-to-portal") return;
+    sessionStorage.setItem("mec.swap", "to-portal");
+    setPhase("exit-to-portal");
+    setTimeout(() => navigate({ to: "/portal" }), 400);
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,11 +75,32 @@ function LoginPage() {
     }, 220);
   };
 
+  // Animation classes:
+  // Brand panel starts on LEFT (default) or RIGHT (mirror).
+  //  - exit-to-portal: brand always slides OUT toward its OWN side (left→left, right→right)
+  //  - enter (arrived from portal, mirror=true, brand on RIGHT): comes IN from RIGHT
+  // Cross-swap direction rules:
+  //  Exit: each panel slides toward the OPPOSITE side (so it feels like they cross).
+  //  Enter: each panel slides IN from the OPPOSITE side of its new position.
+  const brandAnim =
+    phase === "exit-to-portal"
+      ? mirror ? "swap-out-left" : "swap-out-right"
+      : phase === "enter"
+        ? "swap-in-left"
+        : "";
+  const formAnim =
+    phase === "exit-to-portal"
+      ? mirror ? "swap-out-right" : "swap-out-left"
+      : phase === "enter"
+        ? "swap-in-right"
+        : "";
+
+
 
   return (
-    <div className="relative flex min-h-screen overflow-hidden bg-background">
+    <div className={`relative flex min-h-screen overflow-hidden bg-background ${mirror ? "lg:flex-row-reverse" : ""}`}>
       {/* LEFT — brand stage */}
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden p-12 lg:flex side-dark">
+      <div className={`relative hidden w-1/2 flex-col justify-between overflow-hidden p-12 lg:flex side-dark ${brandAnim}`}>
         <div className="grid-mesh absolute inset-0 opacity-70" />
         <div
           className="aurora-blob"
@@ -131,7 +173,7 @@ function LoginPage() {
       </div>
 
       {/* RIGHT — role picker + form */}
-      <div className="relative flex w-full items-center justify-center px-6 py-12 lg:w-1/2">
+      <div className={`relative flex w-full items-center justify-center px-6 py-12 lg:w-1/2 ${formAnim}`}>
         <div
           className="aurora-blob lg:hidden"
           style={{ background: "radial-gradient(circle,#FDF5F7,transparent 65%)", width: 420, height: 420, top: -140, right: -60 }}
@@ -162,7 +204,7 @@ function LoginPage() {
               <div className="grid gap-4">
                 <button
                   type="button"
-                  onClick={() => navigate({ to: "/portal" })}
+                  onClick={goClient}
                   className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-divider bg-white p-5 text-left transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_10px_30px_-12px_rgba(255,60,90,0.35)]"
                 >
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent text-primary transition-transform group-hover:scale-110">
@@ -285,6 +327,17 @@ function LoginPage() {
                   </button>
                 </div>
               </form>
+
+              <div className="mt-8 text-center text-[11px]" style={{ color: "#999" }}>
+                Not a team member?{" "}
+                <button
+                  type="button"
+                  onClick={goClient}
+                  className="font-bold text-primary hover:underline"
+                >
+                  Client sign in →
+                </button>
+              </div>
             </div>
           )}
         </div>

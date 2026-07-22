@@ -168,11 +168,45 @@ function ClientChip() {
 
 function PortalAuthScreen() {
   const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
+  const [phase, setPhase] = useState<"idle" | "enter" | "exit">("idle");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem("mec.swap") === "to-portal") {
+      sessionStorage.removeItem("mec.swap");
+      setPhase("enter");
+      const t = setTimeout(() => setPhase("idle"), 560);
+      return () => clearTimeout(t);
+    }
+  }, []);
+
+  const goStaff = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (phase === "exit") return;
+    sessionStorage.setItem("mec.swap", "to-login");
+    setPhase("exit");
+    setTimeout(() => navigate({ to: "/login" }), 400);
+  };
+
+  const focusForm = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const el = document.querySelector<HTMLInputElement>('input[type="email"], input[autocomplete="email"]');
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => el?.focus(), 350);
+  };
+
+  // Cross-swap: brand (LEFT) exits toward RIGHT; form (RIGHT) exits toward LEFT.
+  // On enter from /login, brand slides IN from RIGHT, form slides IN from LEFT.
+  const brandAnim =
+    phase === "exit" ? "swap-out-right" : phase === "enter" ? "swap-in-right" : "";
+  const formAnim =
+    phase === "exit" ? "swap-out-left" : phase === "enter" ? "swap-in-left" : "";
 
   return (
     <div className="relative flex min-h-screen overflow-hidden bg-background">
       {/* Left brand panel */}
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden p-12 lg:flex side-dark">
+      <div className={`relative hidden w-1/2 flex-col justify-between overflow-hidden p-12 lg:flex side-dark ${brandAnim}`}>
         <div className="grid-mesh absolute inset-0 opacity-60" />
         <div className="aurora-blob" style={{ background: "radial-gradient(circle,#FF6B85,transparent 60%)", width: 520, height: 520, top: -120, left: -120, opacity: 0.5 }} />
         <div className="aurora-blob" style={{ background: "radial-gradient(circle,#3A0710,transparent 60%)", width: 460, height: 460, bottom: -140, right: -100, animationDelay: "-6s", opacity: 0.7 }} />
@@ -186,14 +220,15 @@ function PortalAuthScreen() {
         </div>
 
         <div className="relative z-10 max-w-md text-white">
-          <Link
-            to="/portal"
+          <button
+            type="button"
+            onClick={focusForm}
             className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.2em] text-white backdrop-blur-md transition hover:bg-white/20"
           >
             <LayoutDashboard className="h-3.5 w-3.5" />
             Go to Dashboard
             <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
-          </Link>
+          </button>
           <h1 className="mt-5 text-5xl font-black leading-[1.02] tracking-tight text-white">
             Everything you need,<br /><span className="italic text-white/80">in one place.</span>
           </h1>
@@ -238,7 +273,7 @@ function PortalAuthScreen() {
       </div>
 
       {/* Right auth panel */}
-      <div className="relative flex w-full items-center justify-center px-6 py-12 lg:w-1/2">
+      <div className={`relative flex w-full items-center justify-center px-6 py-12 lg:w-1/2 ${formAnim}`}>
         <div className="relative z-10 w-full max-w-md">
           <div className="mb-8 flex items-center gap-3 lg:hidden">
             <Logo size={44} />
@@ -254,13 +289,16 @@ function PortalAuthScreen() {
 
           <div className="mt-8 text-center text-[11px]" style={{ color: "#999" }}>
             Team member?{" "}
-            <Link to="/login" className="font-bold text-primary hover:underline">Staff sign in →</Link>
+            <a href="/login" onClick={goStaff} className="font-bold text-primary hover:underline">
+              Staff sign in →
+            </a>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
 
 function SignInForm({ switchTo }: { switchTo: (m: "signin" | "signup" | "forgot") => void }) {
   const clientLogin = useCRM((s) => s.clientLogin);
