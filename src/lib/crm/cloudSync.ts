@@ -1,16 +1,17 @@
 // Shared-device sync for client users via Lovable Cloud.
 // Mirrors the localStorage `clientUsers` array to public.client_users_sync
-// so a client who signs up on one device shows up in every admin browser.
+// through service-role-backed server functions (browser has no direct DB access).
 //
 // A single flag `mec.cloudSync` in localStorage (default ON) gates all writes.
-// Disabling it stops both reads and writes — the app falls back to pure
-// localStorage behaviour.
 
-import { supabase } from "@/integrations/supabase/client";
 import type { ClientUser } from "./types";
+import {
+  cloudPushClientUser,
+  cloudDeleteClientUser,
+  cloudFetchClientUsers,
+} from "./cloudSync.functions";
 
 const FLAG_KEY = "mec.cloudSync";
-const TABLE = "client_users_sync";
 
 export function isCloudSyncEnabled(): boolean {
   if (typeof window === "undefined") return false;
@@ -24,7 +25,6 @@ export function setCloudSyncEnabled(enabled: boolean) {
 }
 
 function log(err: unknown, ctx: string) {
-  // Non-fatal — sync is best-effort so the local UX never blocks.
   // eslint-disable-next-line no-console
   console.warn(`[cloudSync:${ctx}]`, err);
 }
@@ -32,15 +32,13 @@ function log(err: unknown, ctx: string) {
 export async function pushClientUser(user: ClientUser): Promise<void> {
   if (!isCloudSyncEnabled()) return;
   try {
-    const { error } = await (supabase.from(TABLE) as any).upsert(
-      {
+    await cloudPushClientUser({
+      data: {
         id: user.id,
         email: user.email.trim().toLowerCase(),
         data: user,
       },
-      { onConflict: "id" },
-    );
-    if (error) log(error, "push");
+    });
   } catch (e) {
     log(e, "push");
   }
@@ -49,8 +47,7 @@ export async function pushClientUser(user: ClientUser): Promise<void> {
 export async function deleteClientUserRemote(id: string): Promise<void> {
   if (!isCloudSyncEnabled()) return;
   try {
-    const { error } = await (supabase.from(TABLE) as any).delete().eq("id", id);
-    if (error) log(error, "delete");
+    await cloudDeleteClientUser({ data: { id } });
   } catch (e) {
     log(e, "delete");
   }
@@ -59,16 +56,12 @@ export async function deleteClientUserRemote(id: string): Promise<void> {
 export async function fetchAllClientUsers(): Promise<ClientUser[] | null> {
   if (!isCloudSyncEnabled()) return null;
   try {
-    const { data, error } = await (supabase.from(TABLE) as any)
-      .select("data")
-      .order("created_at", { ascending: false });
-    if (error) {
-      log(error, "fetch");
-      return null;
-    }
-    return (data ?? [])
-      .map((r: { data: ClientUser }) => r.data)
-      .filter((u: ClientUser | null | undefined): u is ClientUser => !!u && !!u.id && !!u.email);
+    const res = await cloudFetchClientUsers();
+    return (res.rows ?? [])
+      .filter((u: unknown): u is ClientUser => {
+        const c = u as ClientUser | null | undefined;
+        return !!c && typeof c.id === "string" && typeof c.email === "string";
+      });
   } catch (e) {
     log(e, "fetch");
     return null;
@@ -87,7 +80,6 @@ export function mergeClientUsers(local: ClientUser[], remote: ClientUser[]): Cli
       byKey.set(k, r);
       continue;
     }
-    // Prefer whichever record was updated more recently.
     const localTime = Date.parse(existing.lastInvitedAt || existing.createdAt || "") || 0;
     const remoteTime = Date.parse(r.lastInvitedAt || r.createdAt || "") || 0;
     byKey.set(k, remoteTime >= localTime ? r : existing);
