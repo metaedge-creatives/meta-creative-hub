@@ -609,6 +609,7 @@ export const useCRM = create<CRMState & Actions>()(
           createdAt: new Date().toISOString(),
         };
         set((s) => ({ clientUsers: [item, ...s.clientUsers], currentClientUserId: item.id }));
+        void pushClientUser(item);
         get().addNotification({ kind: "company", title: "New client signup", body: `${item.name} (${item.email})`, link: "/customers/client-users" });
         return { ok: true, user: item };
       },
