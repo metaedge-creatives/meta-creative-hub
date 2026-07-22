@@ -413,6 +413,18 @@ export interface PasswordResetCode {
   expiresAt: string;
 }
 
+export interface PendingSignup {
+  email: string;
+  code: string;
+  expiresAt: string;
+  data: {
+    name: string;
+    password: string;
+    companyName?: string;
+    phone?: string;
+  };
+}
+
 export interface ListItem {
   id: string;
   name: string;
@@ -476,6 +488,7 @@ export interface CRMState {
   currentUserId: string | null;
   currentClientUserId: string | null;
   clientResetCodes: PasswordResetCode[];
+  pendingSignups: PendingSignup[];
   moduleSettings: Record<string, Record<string, any>>;
   lists: Record<string, ListItem[]>;
   errorLogs: ErrorLog[];

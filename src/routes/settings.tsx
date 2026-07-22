@@ -419,6 +419,11 @@ const TREE: Section[] = [
           { key: "sendReminders", label: "Send task reminders", type: "toggle", default: true },
           { key: "runAutomations", label: "Run automations", type: "toggle", default: true },
         ]}},
+        { slug: "security", label: "Security", config: { kind: "form", section: "main.security", fields: [
+          { key: "emailOtp", label: "Require email verification (6-digit code) for client signup", type: "toggle", default: false },
+          { key: "passwordMinLen", label: "Minimum password length", type: "number", default: 6 },
+          { key: "sessionTimeoutMin", label: "Session timeout (minutes, 0 = never)", type: "number", default: 0 },
+        ]}},
         { slug: "clear-cache", label: "Clear Cache", config: { kind: "component", render: () => <ClearCacheSection /> }},
         { slug: "error-logs", label: "Error Logs", config: { kind: "component", render: () => <ErrorLogsSection /> }},
       ]},
@@ -1209,6 +1214,7 @@ function CompanyLogoSection() {
 function ModulesToggleSection() {
   const enabled = useCRM((s) => s.moduleSettings["main.modules"]) ?? EMPTY_OBJ;
   const set = useCRM((s) => s.setSetting);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
   const list: { key: string; label: string }[] = [
     { key: "clients", label: "Clients" }, { key: "leads", label: "Leads" },
     { key: "projects", label: "Projects" }, { key: "tasks", label: "Tasks" },
@@ -1220,13 +1226,21 @@ function ModulesToggleSection() {
     { key: "emailMarketing", label: "Email Marketing" }, { key: "products", label: "Products" },
   ];
   return (
-    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-      {list.map((m) => (
-        <div key={m.key} className="flex items-center justify-between rounded-lg border border-divider bg-background px-4 py-3">
-          <span className="text-sm font-bold">{m.label}</span>
-          <Switch checked={enabled[m.key] ?? true} onCheckedChange={(v) => set("main.modules", m.key, v)} />
-        </div>
-      ))}
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+        {list.map((m) => (
+          <div key={m.key} className="flex items-center justify-between rounded-lg border border-divider bg-background px-4 py-3">
+            <span className="text-sm font-bold">{m.label}</span>
+            <Switch checked={enabled[m.key] ?? true} onCheckedChange={(v) => { set("main.modules", m.key, v); setSavedAt(Date.now()); setTimeout(() => setSavedAt(null), 1500); }} />
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-between">
+        <p className="text-[11px]" style={{ color: "#999" }}>Changes save automatically as you toggle.</p>
+        <Button onClick={() => { setSavedAt(Date.now()); setTimeout(() => setSavedAt(null), 1500); }} className="font-bold">
+          {savedAt ? "Saved ✓" : "Save changes"}
+        </Button>
+      </div>
     </div>
   );
 }
@@ -1276,12 +1290,17 @@ function ErrorLogsSection() {
 function EmailApiSection() {
   const cfg = useCRM((s) => s.emailConfig);
   const set = useCRM((s) => s.setEmailConfig);
+  const [draft, setDraft] = useState(cfg);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
+  useEffect(() => { setDraft(cfg); }, [cfg]);
+  const dirty = JSON.stringify(draft) !== JSON.stringify(cfg);
+  const save = () => { set(draft); setSavedAt(Date.now()); setTimeout(() => setSavedAt(null), 1800); };
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
           <Label>Provider</Label>
-          <Select value={cfg.provider} onValueChange={(v) => set({ provider: v as any })}>
+          <Select value={draft.provider} onValueChange={(v) => setDraft({ ...draft, provider: v as any })}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="none">Disabled (mailto fallback)</SelectItem>
@@ -1292,12 +1311,20 @@ function EmailApiSection() {
             </SelectContent>
           </Select>
         </div>
-        <div><Label>API key / secret</Label><Input type="password" value={cfg.apiKey ?? ""} onChange={(e) => set({ apiKey: e.target.value })} placeholder="Paste key" /></div>
-        <div><Label>From name</Label><Input value={cfg.fromName} onChange={(e) => set({ fromName: e.target.value })} /></div>
-        <div><Label>From email</Label><Input type="email" value={cfg.fromEmail} onChange={(e) => set({ fromEmail: e.target.value })} /></div>
-        <div><Label>Verified domain</Label><Input value={cfg.domain ?? ""} onChange={(e) => set({ domain: e.target.value })} placeholder="mail.crm.metaedgecreatives.com" /></div>
+        <div><Label>API key / secret</Label><Input type="password" value={draft.apiKey ?? ""} onChange={(e) => setDraft({ ...draft, apiKey: e.target.value })} placeholder="Paste key" /></div>
+        <div><Label>From name</Label><Input value={draft.fromName} onChange={(e) => setDraft({ ...draft, fromName: e.target.value })} /></div>
+        <div><Label>From email</Label><Input type="email" value={draft.fromEmail} onChange={(e) => setDraft({ ...draft, fromEmail: e.target.value })} /></div>
+        <div><Label>Verified domain</Label><Input value={draft.domain ?? ""} onChange={(e) => setDraft({ ...draft, domain: e.target.value })} placeholder="mail.crm.metaedgecreatives.com" /></div>
       </div>
-      <p className="text-[11px]" style={{color:"#999"}}>Keys are stored only in this browser. Without a provider, invoices and campaigns fall back to a native mailto link.</p>
+      <div className="flex items-center justify-between">
+        <p className="text-[11px]" style={{ color: "#999" }}>Keys are stored only in this browser. Without a provider, invoices and campaigns fall back to a native mailto link.</p>
+        <div className="flex items-center gap-3">
+          {dirty && <span className="text-[11px] font-bold text-primary">Unsaved changes</span>}
+          <Button onClick={save} disabled={!dirty} className="font-bold">
+            {savedAt ? "Saved ✓" : "Save changes"}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -407,10 +407,18 @@ function SignInForm({ switchTo }: { switchTo: (m: "signin" | "signup" | "forgot"
 
 function SignUpForm({ switchTo }: { switchTo: (m: "signin" | "signup" | "forgot") => void }) {
   const clientSignup = useCRM((s) => s.clientSignup);
+  const requestClientSignup = useCRM((s) => s.requestClientSignup);
+  const verifyClientSignup = useCRM((s) => s.verifyClientSignup);
+  const otpEnabled = useCRM((s) => s.moduleSettings["main.security"]?.emailOtp === true);
+  const emailConfig = useCRM((s) => s.emailConfig);
   const [f, setF] = useState({ name: "", email: "", companyName: "", phone: "", password: "", confirm: "" });
   const [showPw, setShowPw] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState<"form" | "verify">("form");
+  const [code, setCode] = useState("");
+  const [devCode, setDevCode] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
 
   const strength = useMemo(() => {
     const p = f.password;
@@ -432,17 +440,104 @@ function SignUpForm({ switchTo }: { switchTo: (m: "signin" | "signup" | "forgot"
     if (f.password !== f.confirm) return setErr("Passwords don't match.");
     setLoading(true);
     setTimeout(() => {
-      const res = clientSignup({
-        name: f.name,
-        email: f.email,
-        password: f.password,
-        companyName: f.companyName || undefined,
-        phone: f.phone || undefined,
-      });
-      setLoading(false);
-      if (!res.ok) setErr(res.error ?? "Could not create account.");
+      if (otpEnabled) {
+        const res = requestClientSignup({
+          name: f.name,
+          email: f.email,
+          password: f.password,
+          companyName: f.companyName || undefined,
+          phone: f.phone || undefined,
+        });
+        setLoading(false);
+        if (!res.ok) return setErr(res.error ?? "Could not send verification code.");
+        if (emailConfig.provider !== "none" && emailConfig.apiKey) {
+          setInfo(`A 6-digit verification code has been sent to ${f.email}.`);
+          setDevCode(null);
+        } else {
+          setInfo("Email sender not configured. Your one-time code is shown below (configure Email API in Settings for real delivery).");
+          setDevCode(res.code ?? null);
+        }
+        setStep("verify");
+      } else {
+        const res = clientSignup({
+          name: f.name,
+          email: f.email,
+          password: f.password,
+          companyName: f.companyName || undefined,
+          phone: f.phone || undefined,
+        });
+        setLoading(false);
+        if (!res.ok) setErr(res.error ?? "Could not create account.");
+      }
     }, 200);
   };
+
+  const verify = (e: React.FormEvent) => {
+    e.preventDefault();
+    setErr(null);
+    if (code.trim().length !== 6) return setErr("Enter the 6-digit code.");
+    setLoading(true);
+    setTimeout(() => {
+      const res = verifyClientSignup(f.email, code);
+      setLoading(false);
+      if (!res.ok) setErr(res.error ?? "Verification failed.");
+    }, 200);
+  };
+
+  const resend = () => {
+    setErr(null);
+    const res = requestClientSignup({
+      name: f.name,
+      email: f.email,
+      password: f.password,
+      companyName: f.companyName || undefined,
+      phone: f.phone || undefined,
+    });
+    if (!res.ok) return setErr(res.error ?? "Could not resend.");
+    if (emailConfig.provider !== "none" && emailConfig.apiKey) {
+      setInfo(`A new code has been sent to ${f.email}.`);
+      setDevCode(null);
+    } else {
+      setInfo("A new one-time code is shown below.");
+      setDevCode(res.code ?? null);
+    }
+  };
+
+  if (step === "verify") {
+    return (
+      <>
+        <div className="mb-6">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary">
+            <Sparkles className="h-3 w-3" /> Verify your email
+          </div>
+          <h2 className="mt-4 text-4xl font-black tracking-tight">Check your inbox.</h2>
+          <p className="mt-2 text-sm" style={{ color: "#666" }}>We sent a 6-digit code to <b>{f.email}</b>.</p>
+        </div>
+        <form onSubmit={verify} className="space-y-3">
+          {info && (
+            <div className="rounded-lg border border-primary/20 bg-accent px-3 py-2 text-xs text-primary">{info}</div>
+          )}
+          {devCode && (
+            <div className="rounded-lg border border-primary/25 bg-accent px-3 py-2 text-center text-xs">
+              Demo code: <span className="ml-1 font-black tracking-[0.3em] text-primary">{devCode}</span>
+            </div>
+          )}
+          <div>
+            <Label>Verification code</Label>
+            <Input maxLength={6} inputMode="numeric" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} placeholder="123456" className="text-center text-lg tracking-[0.5em] font-black" autoFocus />
+          </div>
+          {err && <div className="rounded-lg border border-primary/25 bg-accent px-3 py-2 text-xs font-semibold text-primary">{err}</div>}
+          <Button type="submit" disabled={loading} className="h-12 w-full font-extrabold">
+            {loading ? "Verifying…" : (<>Verify & create account <ArrowRight className="h-4 w-4" /></>)}
+          </Button>
+          <div className="flex items-center justify-between pt-1 text-[11px]" style={{ color: "#999" }}>
+            <button type="button" onClick={() => { setStep("form"); setCode(""); setDevCode(null); setInfo(null); setErr(null); }} className="font-semibold text-primary hover:underline">← Edit details</button>
+            <button type="button" onClick={resend} className="font-semibold text-primary hover:underline">Resend code</button>
+          </div>
+        </form>
+      </>
+    );
+  }
 
   return (
     <>
@@ -451,7 +546,9 @@ function SignUpForm({ switchTo }: { switchTo: (m: "signin" | "signup" | "forgot"
           <Sparkles className="h-3 w-3" /> Create your account
         </div>
         <h2 className="mt-4 text-4xl font-black tracking-tight">Join the portal.</h2>
-        <p className="mt-2 text-sm" style={{ color: "#666" }}>Set up your client account — instant access, no waiting.</p>
+        <p className="mt-2 text-sm" style={{ color: "#666" }}>
+          {otpEnabled ? "We'll email a 6-digit code to verify your address." : "Set up your client account — instant access, no waiting."}
+        </p>
       </div>
 
       <form onSubmit={submit} className="space-y-3">
@@ -489,7 +586,7 @@ function SignUpForm({ switchTo }: { switchTo: (m: "signin" | "signup" | "forgot"
         )}
 
         <Button type="submit" disabled={loading} className="h-12 w-full font-extrabold">
-          {loading ? "Creating your account…" : (<>Create account <ArrowRight className="h-4 w-4" /></>)}
+          {loading ? (otpEnabled ? "Sending code…" : "Creating your account…") : (<>{otpEnabled ? "Send verification code" : "Create account"} <ArrowRight className="h-4 w-4" /></>)}
         </Button>
 
         <p className="text-center text-[11px]" style={{ color: "#999" }}>By continuing you agree to our terms and privacy policy.</p>

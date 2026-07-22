@@ -126,6 +126,7 @@ const seed: CRMState = {
   currentUserId: null,
   currentClientUserId: null,
   clientResetCodes: [],
+  pendingSignups: [],
   moduleSettings: {},
   lists: {},
   errorLogs: [],
@@ -213,6 +214,8 @@ interface Actions {
   resendClientInvite: (id: string) => { ok: boolean; error?: string; user?: ClientUser };
 
   clientSignup: (input: { name: string; email: string; password: string; companyName?: string; phone?: string }) => { ok: boolean; error?: string; user?: ClientUser };
+  requestClientSignup: (input: { name: string; email: string; password: string; companyName?: string; phone?: string }) => { ok: boolean; error?: string; code?: string };
+  verifyClientSignup: (email: string, code: string) => { ok: boolean; error?: string; user?: ClientUser };
   clientLogin: (email: string, password: string) => { ok: boolean; error?: string };
   hydrateClientUsersFromCloud: () => Promise<void>;
   clientLogout: () => void;
@@ -609,6 +612,69 @@ export const useCRM = create<CRMState & Actions>()(
           createdAt: new Date().toISOString(),
         };
         set((s) => ({ clientUsers: [item, ...s.clientUsers], currentClientUserId: item.id }));
+        void pushClientUser(item);
+        get().addNotification({ kind: "company", title: "New client signup", body: `${item.name} (${item.email})`, link: "/customers/client-users" });
+        return { ok: true, user: item };
+      },
+
+      requestClientSignup: (input) => {
+        const emailNorm = input.email.trim().toLowerCase();
+        if (!emailNorm || !input.password || input.password.length < 6) {
+          return { ok: false, error: "Enter a valid email and a password (min 6 chars)." };
+        }
+        if (get().clientUsers.some((c) => c.email.trim().toLowerCase() === emailNorm)) {
+          return { ok: false, error: "An account with that email already exists." };
+        }
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+        set((s) => ({
+          pendingSignups: [
+            ...s.pendingSignups.filter((p) => p.email !== emailNorm),
+            {
+              email: emailNorm,
+              code,
+              expiresAt,
+              data: {
+                name: input.name.trim() || emailNorm,
+                password: input.password,
+                companyName: input.companyName,
+                phone: input.phone,
+              },
+            },
+          ],
+        }));
+        return { ok: true, code };
+      },
+
+      verifyClientSignup: (email, code) => {
+        const emailNorm = email.trim().toLowerCase();
+        const entry = get().pendingSignups.find((p) => p.email === emailNorm);
+        if (!entry) return { ok: false, error: "No verification in progress. Please sign up again." };
+        if (new Date(entry.expiresAt).getTime() < Date.now()) {
+          set((s) => ({ pendingSignups: s.pendingSignups.filter((p) => p.email !== emailNorm) }));
+          return { ok: false, error: "Code expired. Please sign up again." };
+        }
+        if (entry.code !== code.trim()) return { ok: false, error: "Incorrect verification code." };
+        if (get().clientUsers.some((c) => c.email.trim().toLowerCase() === emailNorm)) {
+          set((s) => ({ pendingSignups: s.pendingSignups.filter((p) => p.email !== emailNorm) }));
+          return { ok: false, error: "An account with that email already exists." };
+        }
+        const item: ClientUser = {
+          id: uid(),
+          name: entry.data.name,
+          email: emailNorm,
+          password: entry.data.password,
+          phone: entry.data.phone,
+          companyName: entry.data.companyName,
+          status: "active",
+          permissions: { dashboard: true, projects: true, invoices: true, contracts: true, payments: true, spending: true, proposals: true, reports: true, services: true, support: true, settings: true, consultation: true },
+          createdAt: new Date().toISOString(),
+        };
+        set((s) => ({
+          clientUsers: [item, ...s.clientUsers],
+          currentClientUserId: item.id,
+          pendingSignups: s.pendingSignups.filter((p) => p.email !== emailNorm),
+        }));
         void pushClientUser(item);
         get().addNotification({ kind: "company", title: "New client signup", body: `${item.name} (${item.email})`, link: "/customers/client-users" });
         return { ok: true, user: item };
