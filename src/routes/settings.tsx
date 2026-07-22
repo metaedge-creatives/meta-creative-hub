@@ -1360,6 +1360,67 @@ function IntegrationsSection() {
   );
 }
 
+/* -------- Cloud Sync -------- */
+function CloudSyncSection() {
+  const hydrate = useCRM((s) => s.hydrateClientUsersFromCloud);
+  const clientCount = useCRM((s) => s.clientUsers.length);
+  const [enabled, setEnabled] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    const v = window.localStorage.getItem("mec.cloudSync");
+    return v === null ? true : v === "1";
+  });
+  const [syncing, setSyncing] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const toggle = (v: boolean) => {
+    setEnabled(v);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("mec.cloudSync", v ? "1" : "0");
+    }
+    setMsg(v ? "Cloud sync enabled." : "Cloud sync disabled. App now uses this browser only.");
+  };
+
+  const refresh = async () => {
+    setSyncing(true);
+    setMsg(null);
+    await hydrate();
+    setSyncing(false);
+    setMsg("Pulled latest client users from the cloud.");
+  };
+
+  return (
+    <div className="rounded-2xl border border-divider bg-card p-6 brand-shadow">
+      <div className="mb-1 text-sm font-black">Cloud Sync</div>
+      <div className="mb-4 text-[12px]" style={{ color: "#666" }}>
+        When ON, client sign-ups and updates are shared across every device.
+        When OFF, everything stays on this browser only.
+      </div>
+
+      <div className="flex items-center justify-between rounded-xl border border-divider p-4">
+        <div>
+          <div className="text-[13px] font-bold">Sync client users across devices</div>
+          <div className="text-[11px]" style={{ color: "#999" }}>
+            {clientCount} client user{clientCount === 1 ? "" : "s"} in this browser
+          </div>
+        </div>
+        <Switch checked={enabled} onCheckedChange={toggle} />
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <Button variant="outline" onClick={refresh} disabled={!enabled || syncing} className="font-bold">
+          {syncing ? "Refreshing…" : "Pull latest from cloud"}
+        </Button>
+        {msg && <span className="text-[12px]" style={{ color: "#666" }}>{msg}</span>}
+      </div>
+
+      <div className="mt-4 text-[11px]" style={{ color: "#999" }}>
+        Note: Passwords are synced in the same shape they're stored locally. For stronger
+        security, we can migrate this to full authentication later.
+      </div>
+    </div>
+  );
+}
+
 /* -------- Data / Backup -------- */
 function DataSection() {
   const state = useCRM();
