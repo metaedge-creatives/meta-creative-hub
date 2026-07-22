@@ -20,7 +20,8 @@ function flatten(v: any): string {
   return String(v);
 }
 
-function toCSV(rows: any[], columns?: { key: string; label?: string }[]): string {
+type Col = { key: string; label?: string };
+function toCSV(rows: any[], columns?: Col[]): string {
   if (rows.length === 0) return "";
   const cols =
     columns ??
