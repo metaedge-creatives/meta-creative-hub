@@ -277,11 +277,27 @@ export interface Contract {
   id: string;
   title: string;
   clientName: string;
+  clientEmail?: string;
+  clientUserId?: string;
   startDate?: string;
   endDate?: string;
   value: number;
   status: ContractStatus;
   notes?: string;
+  createdAt: string;
+}
+
+export type ConsultationStatus = "requested" | "confirmed" | "completed" | "cancelled";
+export interface ConsultationBooking {
+  id: string;
+  clientUserId: string;
+  clientName: string;
+  clientEmail?: string;
+  preferredDate?: string;
+  topic?: string;
+  notes?: string;
+  calendlyUrl?: string;
+  status: ConsultationStatus;
   createdAt: string;
 }
 
