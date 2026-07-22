@@ -240,15 +240,86 @@ function PortalServices() {
                 <div className="mt-1 text-xs" style={{ color: "#666" }}>Our team will get back to you with a proposal.</div>
               </div>
             ) : (
-              <div className="space-y-3">
-                <div><Label>Title *</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Redesign landing page" /></div>
-                <div><Label>Describe what you need</Label><Textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Goals, references, timing…" /></div>
-                <div><Label>Budget (optional)</Label><Input type="number" value={form.budget} onChange={(e) => setForm({ ...form, budget: e.target.value })} placeholder="USD" /></div>
-                <div className="flex justify-end gap-2 pt-1">
-                  <Button variant="outline" onClick={() => setCustomOpen(false)}>Cancel</Button>
-                  <Button onClick={submit} disabled={!form.title.trim()}><Send className="h-4 w-4" /> Send request</Button>
+              <form
+                className="space-y-3"
+                onSubmit={(e) => { e.preventDefault(); void submit(); }}
+                noValidate
+              >
+                <div>
+                  <Label htmlFor="req-title">Title *</Label>
+                  <Input
+                    id="req-title"
+                    value={form.title}
+                    onChange={(e) => updateField("title", e.target.value)}
+                    placeholder="e.g. Redesign landing page"
+                    maxLength={TITLE_MAX}
+                    aria-invalid={!!errors.title}
+                    aria-describedby={errors.title ? "req-title-err" : undefined}
+                    disabled={submitting}
+                  />
+                  <div className="mt-1 flex items-center justify-between text-[11px]">
+                    {errors.title ? (
+                      <span id="req-title-err" className="text-primary">{errors.title}</span>
+                    ) : <span className="text-muted-foreground">Min 3 characters.</span>}
+                    <span className="text-muted-foreground">{form.title.length}/{TITLE_MAX}</span>
+                  </div>
                 </div>
-              </div>
+                <div>
+                  <Label htmlFor="req-desc">Describe what you need</Label>
+                  <Textarea
+                    id="req-desc"
+                    rows={4}
+                    value={form.description}
+                    onChange={(e) => updateField("description", e.target.value)}
+                    placeholder="Goals, references, timing…"
+                    maxLength={DESC_MAX}
+                    aria-invalid={!!errors.description}
+                    aria-describedby={errors.description ? "req-desc-err" : undefined}
+                    disabled={submitting}
+                  />
+                  <div className="mt-1 flex items-center justify-between text-[11px]">
+                    {errors.description ? (
+                      <span id="req-desc-err" className="text-primary">{errors.description}</span>
+                    ) : <span className="text-muted-foreground">Optional but helpful.</span>}
+                    <span className="text-muted-foreground">{form.description.length}/{DESC_MAX}</span>
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="req-budget">Budget (optional)</Label>
+                  <Input
+                    id="req-budget"
+                    type="number"
+                    inputMode="decimal"
+                    min={0}
+                    step="0.01"
+                    value={form.budget}
+                    onChange={(e) => updateField("budget", e.target.value)}
+                    placeholder="USD"
+                    aria-invalid={!!errors.budget}
+                    aria-describedby={errors.budget ? "req-budget-err" : undefined}
+                    disabled={submitting}
+                  />
+                  {errors.budget && (
+                    <div id="req-budget-err" className="mt-1 text-[11px] text-primary">{errors.budget}</div>
+                  )}
+                </div>
+                {errors.form && (
+                  <div className="flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/5 p-3 text-[12px] text-primary">
+                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                    <span>{errors.form}</span>
+                  </div>
+                )}
+                <div className="flex justify-end gap-2 pt-1">
+                  <Button type="button" variant="outline" onClick={() => setCustomOpen(false)} disabled={submitting}>Cancel</Button>
+                  <Button type="submit" disabled={submitting || !form.title.trim()}>
+                    {submitting ? (
+                      <><Loader2 className="h-4 w-4 animate-spin" /> Sending…</>
+                    ) : (
+                      <><Send className="h-4 w-4" /> Send request</>
+                    )}
+                  </Button>
+                </div>
+              </form>
             )}
           </div>
         </div>
