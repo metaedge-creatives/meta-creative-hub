@@ -279,6 +279,14 @@ export function AppShell() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const user = useCurrentUser();
 
+  const hydrateClientUsersFromCloud = useCRM((s) => s.hydrateClientUsersFromCloud);
+
+  // Pull the latest shared client-user list from Lovable Cloud on mount so
+  // clients who signed up on other devices appear immediately.
+  useEffect(() => {
+    void hydrateClientUsersFromCloud();
+  }, [hydrateClientUsersFromCloud]);
+
   // Cross-tab realtime sync: when any other tab updates the store,
   // rehydrate this tab so UI stays live.
   useEffect(() => {

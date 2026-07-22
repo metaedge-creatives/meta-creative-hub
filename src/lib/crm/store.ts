@@ -37,6 +37,12 @@ import type {
 } from "./types";
 import type { ListItem, ErrorLog } from "./types";
 import type { AppNotification, NotificationKind } from "./types";
+import {
+  pushClientUser,
+  deleteClientUserRemote,
+  fetchAllClientUsers,
+  mergeClientUsers,
+} from "./cloudSync";
 
 const uid = () =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -208,6 +214,7 @@ interface Actions {
 
   clientSignup: (input: { name: string; email: string; password: string; companyName?: string; phone?: string }) => { ok: boolean; error?: string; user?: ClientUser };
   clientLogin: (email: string, password: string) => { ok: boolean; error?: string };
+  hydrateClientUsersFromCloud: () => Promise<void>;
   clientLogout: () => void;
   setCurrentClientUser: (id: string | null) => void;
   updateCurrentClientUser: (patch: Partial<ClientUser>) => void;
@@ -541,12 +548,18 @@ export const useCRM = create<CRMState & Actions>()(
       addClientUser: (c) => {
         const item: ClientUser = { ...c, id: uid(), createdAt: new Date().toISOString() };
         set((s) => ({ clientUsers: [item, ...s.clientUsers] }));
+        void pushClientUser(item);
         return item;
       },
-      updateClientUser: (id, patch) =>
-        set((s) => ({ clientUsers: s.clientUsers.map((c) => (c.id === id ? { ...c, ...patch } : c)) })),
-      deleteClientUser: (id) =>
-        set((s) => ({ clientUsers: s.clientUsers.filter((c) => c.id !== id) })),
+      updateClientUser: (id, patch) => {
+        set((s) => ({ clientUsers: s.clientUsers.map((c) => (c.id === id ? { ...c, ...patch } : c)) }));
+        const updated = get().clientUsers.find((c) => c.id === id);
+        if (updated) void pushClientUser(updated);
+      },
+      deleteClientUser: (id) => {
+        set((s) => ({ clientUsers: s.clientUsers.filter((c) => c.id !== id) }));
+        void deleteClientUserRemote(id);
+      },
       resendClientInvite: (id) => {
         const user = get().clientUsers.find((c) => c.id === id);
         if (!user) return { ok: false, error: "Client user not found" };
@@ -559,6 +572,8 @@ export const useCRM = create<CRMState & Actions>()(
         set((s) => ({
           clientUsers: s.clientUsers.map((c) => (c.id === id ? { ...c, ...patch } : c)),
         }));
+        const updated = get().clientUsers.find((c) => c.id === id);
+        if (updated) void pushClientUser(updated);
         get().addNotification({
           kind: "system",
           title: "Invite resent",
@@ -566,6 +581,12 @@ export const useCRM = create<CRMState & Actions>()(
           link: "/customers/client-users",
         });
         return { ok: true, user: { ...user, ...patch } };
+      },
+
+      hydrateClientUsersFromCloud: async () => {
+        const remote = await fetchAllClientUsers();
+        if (!remote) return;
+        set((s) => ({ clientUsers: mergeClientUsers(s.clientUsers, remote) }));
       },
 
       clientSignup: (input) => {
@@ -588,15 +609,23 @@ export const useCRM = create<CRMState & Actions>()(
           createdAt: new Date().toISOString(),
         };
         set((s) => ({ clientUsers: [item, ...s.clientUsers], currentClientUserId: item.id }));
+        void pushClientUser(item);
         get().addNotification({ kind: "company", title: "New client signup", body: `${item.name} (${item.email})`, link: "/customers/client-users" });
         return { ok: true, user: item };
       },
       clientLogin: (email, password) => {
         const emailNorm = email.trim().toLowerCase();
-        const user = get().clientUsers.find(
-          (c) => c.email.trim().toLowerCase() === emailNorm && c.password === password,
-        );
-        if (!user) return { ok: false, error: "Invalid email or password." };
+        const match = () =>
+          get().clientUsers.find(
+            (c) => c.email.trim().toLowerCase() === emailNorm && c.password === password,
+          );
+        let user = match();
+        if (!user) {
+          // Fire-and-forget cloud refresh so a client who signed up on another
+          // device can log in on the next attempt.
+          void get().hydrateClientUsersFromCloud();
+          return { ok: false, error: "Invalid email or password." };
+        }
         if (user.status === "suspended") return { ok: false, error: "Account is suspended. Contact support." };
         set({ currentClientUserId: user.id });
         return { ok: true };
@@ -607,6 +636,8 @@ export const useCRM = create<CRMState & Actions>()(
         const id = get().currentClientUserId;
         if (!id) return;
         set((s) => ({ clientUsers: s.clientUsers.map((c) => (c.id === id ? { ...c, ...patch } : c)) }));
+        const updated = get().clientUsers.find((c) => c.id === id);
+        if (updated) void pushClientUser(updated);
       },
       requestClientPasswordReset: (email) => {
         const emailNorm = email.trim().toLowerCase();
@@ -636,6 +667,8 @@ export const useCRM = create<CRMState & Actions>()(
           clientUsers: s.clientUsers.map((c) => (c.id === user.id ? { ...c, password: newPassword } : c)),
           clientResetCodes: s.clientResetCodes.filter((r) => r.userId !== user.id),
         }));
+        const updated = get().clientUsers.find((c) => c.id === user.id);
+        if (updated) void pushClientUser(updated);
         return { ok: true };
       },
 
