@@ -202,10 +202,26 @@ function PortalAuthScreen() {
               { icon: ScrollText, k: "Contracts", v: "Sign online" },
               { icon: LifeBuoy, k: "Support", v: "Get help fast" },
             ].map((c) => (
-              <div key={c.k} className="glass rounded-xl p-3">
-                <c.icon className="mb-2 h-4 w-4 text-white" />
-                <div className="text-[11px] font-extrabold text-white">{c.k}</div>
-                <div className="text-[10px] text-white/70">{c.v}</div>
+              <div
+                key={c.k}
+                className="relative overflow-hidden rounded-xl p-3 border border-white/60 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.9)]"
+                style={{
+                  background:
+                    "linear-gradient(140deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.85) 45%, rgba(255,255,255,0.95) 100%)",
+                  backdropFilter: "blur(14px) saturate(160%)",
+                }}
+              >
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-xl"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 100%)",
+                  }}
+                />
+                <c.icon className="relative mb-2 h-4 w-4 text-primary" />
+                <div className="relative text-[11px] font-extrabold text-neutral-900">{c.k}</div>
+                <div className="relative text-[10px] text-neutral-600">{c.v}</div>
               </div>
             ))}
           </div>
