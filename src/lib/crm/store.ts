@@ -615,10 +615,17 @@ export const useCRM = create<CRMState & Actions>()(
       },
       clientLogin: (email, password) => {
         const emailNorm = email.trim().toLowerCase();
-        const user = get().clientUsers.find(
-          (c) => c.email.trim().toLowerCase() === emailNorm && c.password === password,
-        );
-        if (!user) return { ok: false, error: "Invalid email or password." };
+        const match = () =>
+          get().clientUsers.find(
+            (c) => c.email.trim().toLowerCase() === emailNorm && c.password === password,
+          );
+        let user = match();
+        if (!user) {
+          // Fire-and-forget cloud refresh so a client who signed up on another
+          // device can log in on the next attempt.
+          void get().hydrateClientUsersFromCloud();
+          return { ok: false, error: "Invalid email or password." };
+        }
         if (user.status === "suspended") return { ok: false, error: "Account is suspended. Contact support." };
         set({ currentClientUserId: user.id });
         return { ok: true };
