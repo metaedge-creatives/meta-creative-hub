@@ -15,11 +15,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Trash2, Edit, Send, Check } from "lucide-react";
 import { toast } from "sonner";
 
-const STATUSES: { id: ClientUserStatus; label: string; color: string }[] = [
-  { id: "invited", label: "Invited", color: "#F59E0B" },
-  { id: "active", label: "Active", color: "#10B981" },
-  { id: "suspended", label: "Suspended", color: "#94A3B8" },
+const STATUSES: { id: ClientUserStatus; label: string; color: string; bg: string; fg: string }[] = [
+  { id: "invited", label: "Invited", color: "#F59E0B", bg: "#FEF3C7", fg: "#92400E" },
+  { id: "active", label: "Active", color: "#10B981", bg: "#D1FAE5", fg: "#065F46" },
+  { id: "suspended", label: "Suspended", color: "#94A3B8", bg: "#E2E8F0", fg: "#475569" },
 ];
+
+function StatusBadge({ status }: { status: ClientUserStatus }) {
+  const st = STATUSES.find((s) => s.id === status)!;
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
+      style={{ background: st.bg, color: st.fg }}
+    >
+      <span className="h-1.5 w-1.5 rounded-full" style={{ background: st.color }} />
+      {st.label}
+    </span>
+  );
+}
 
 export const Route = createFileRoute("/customers/client-users")({
   head: () => ({ meta: [{ title: "Client Users · MetaEdge CRM" }] }),
