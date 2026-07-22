@@ -30,6 +30,7 @@ function LoginPage() {
   const login = useCRM((s) => s.login);
   const user = useCurrentUser();
   const navigate = useNavigate();
+  const [role, setRole] = useState<null | "client" | "team">(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +46,6 @@ function LoginPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    // small delay for nicer motion feedback
     setTimeout(() => {
       const result = login(email, password);
       setLoading(false);
@@ -53,6 +53,7 @@ function LoginPage() {
       else setError(result.error ?? "Sign in failed");
     }, 220);
   };
+
 
   return (
     <div className="relative flex min-h-screen overflow-hidden bg-background">
