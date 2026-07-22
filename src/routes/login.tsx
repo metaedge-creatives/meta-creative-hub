@@ -4,7 +4,8 @@ import { useCRM } from "@/lib/crm/store";
 import { useCurrentUser } from "@/lib/crm/hooks";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/crm/Logo";
-import { ArrowRight, Eye, EyeOff, Shield, Sparkles, Zap, KeyRound, Mail } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Shield, Sparkles, Zap, KeyRound, Mail, Users, Briefcase, ArrowLeft } from "lucide-react";
+
 import {
   Dialog,
   DialogContent,
