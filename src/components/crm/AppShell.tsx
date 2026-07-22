@@ -40,6 +40,7 @@ import {
   Zap,
 
   History,
+  Inbox,
 } from "lucide-react";
 import { useCRM } from "@/lib/crm/store";
 import { useCurrentUser, initials } from "@/lib/crm/hooks";
