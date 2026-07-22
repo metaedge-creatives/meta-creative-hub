@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useCRM } from "@/lib/crm/store";
 import { useCurrentClientUser } from "@/lib/crm/hooks";
 import { formatCurrency, formatDate } from "@/lib/crm/hooks";
-import { FileText, ScrollText, CreditCard, LifeBuoy, ArrowRight, Sparkles } from "lucide-react";
+import { FileText, ScrollText, CreditCard, LifeBuoy, ArrowRight, Sparkles, CalendarClock } from "lucide-react";
 
 export const Route = createFileRoute("/portal/")({
   head: () => ({ meta: [{ title: "Dashboard · Client Portal" }] }),
