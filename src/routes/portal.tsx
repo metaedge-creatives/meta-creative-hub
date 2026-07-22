@@ -186,9 +186,6 @@ function PortalAuthScreen() {
         </div>
 
         <div className="relative z-10 max-w-md text-white">
-          <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.2em] text-white/90">
-            <Sparkles className="h-3 w-3" /> Your Studio Portal
-          </div>
           <h1 className="mt-5 text-5xl font-black leading-[1.02] tracking-tight text-white">
             Everything you need,<br /><span className="italic text-white/80">in one place.</span>
           </h1>
