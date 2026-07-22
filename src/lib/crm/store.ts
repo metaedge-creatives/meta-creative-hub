@@ -214,6 +214,8 @@ interface Actions {
   resendClientInvite: (id: string) => { ok: boolean; error?: string; user?: ClientUser };
 
   clientSignup: (input: { name: string; email: string; password: string; companyName?: string; phone?: string }) => { ok: boolean; error?: string; user?: ClientUser };
+  requestClientSignup: (input: { name: string; email: string; password: string; companyName?: string; phone?: string }) => { ok: boolean; error?: string; code?: string };
+  verifyClientSignup: (email: string, code: string) => { ok: boolean; error?: string; user?: ClientUser };
   clientLogin: (email: string, password: string) => { ok: boolean; error?: string };
   hydrateClientUsersFromCloud: () => Promise<void>;
   clientLogout: () => void;
