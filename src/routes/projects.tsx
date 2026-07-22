@@ -17,6 +17,7 @@ import {
   Download, Upload, Search, Filter, FolderKanban, CheckCircle2, Clock, AlertTriangle,
 } from "lucide-react";
 import { ExportMenu } from "@/components/crm/ExportMenu";
+import { ImportDialog } from "@/components/crm/ImportDialog";
 
 const STATUSES = ["brief", "in_progress", "review", "delivered"] as const;
 type Status = typeof STATUSES[number];
