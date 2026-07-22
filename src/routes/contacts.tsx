@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Download, Upload, Search, Filter, Users, Building2, Mail, CalendarPlus } from "lucide-react";
+import { ExportMenu } from "@/components/crm/ExportMenu";
 
 const EMPTY_ARR: any[] = [];
 const APP_MODULES = [
@@ -88,14 +89,16 @@ function ContactsPage() {
     };
   }, [companies, contacts]);
 
-  const exportClients = () => {
-    const blob = new Blob([JSON.stringify(companies, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `clients-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-  };
+  const CLIENT_COLS = [
+    { key: "name", label: "Name" },
+    { key: "email", label: "Email" },
+    { key: "firstName", label: "First Name" },
+    { key: "lastName", label: "Last Name" },
+    { key: "category", label: "Category" },
+    { key: "industry", label: "Industry" },
+    { key: "website", label: "Website" },
+    { key: "createdAt", label: "Created" },
+  ];
 
   const importClients = async (file: File) => {
     try {
@@ -148,9 +151,12 @@ function ContactsPage() {
             <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} className="font-bold">
               <Upload className="h-3.5 w-3.5" /> Import
             </Button>
-            <Button variant="outline" size="sm" onClick={exportClients} className="font-bold">
-              <Download className="h-3.5 w-3.5" /> Export
-            </Button>
+            <ExportMenu
+              filenameBase="clients"
+              title="MetaEdge Creatives — Clients"
+              rows={filteredCompanies}
+              columns={CLIENT_COLS}
+            />
             <input
               ref={fileRef}
               type="file"
@@ -245,24 +251,14 @@ function ContactsPage() {
                   {selected.size} selected
                 </span>
                 <div className="ml-auto flex flex-wrap items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
+                  <ExportMenu
+                    label="Export selected"
+                    filenameBase="clients-selected"
+                    title="MetaEdge Creatives — Selected Clients"
+                    rows={companies.filter((c) => selected.has(c.id))}
+                    columns={CLIENT_COLS}
                     disabled={selected.size === 0}
-                    onClick={() => {
-                      const rows = companies.filter((c) => selected.has(c.id));
-                      const blob = new Blob([JSON.stringify(rows, null, 2)], { type: "application/json" });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement("a");
-                      a.href = url;
-                      a.download = `clients-selected-${new Date().toISOString().slice(0, 10)}.json`;
-                      document.body.appendChild(a); a.click(); a.remove();
-                      URL.revokeObjectURL(url);
-                    }}
-                    className="font-bold"
-                  >
-                    <Download className="h-3.5 w-3.5" /> Export selected
-                  </Button>
+                  />
                   <Select value={bulkCategory} onValueChange={(v) => {
                     setBulkCategory(v);
                     selected.forEach((id) => updateCompany(id, { category: v }));

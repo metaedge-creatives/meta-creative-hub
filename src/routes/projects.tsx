@@ -16,6 +16,7 @@ import {
 import {
   Download, Upload, Search, Filter, FolderKanban, CheckCircle2, Clock, AlertTriangle,
 } from "lucide-react";
+import { ExportMenu } from "@/components/crm/ExportMenu";
 
 const STATUSES = ["brief", "in_progress", "review", "delivered"] as const;
 type Status = typeof STATUSES[number];
@@ -83,15 +84,16 @@ function ProjectsPage() {
       return n;
     });
 
-  const exportProjects = (rows = projects) => {
-    const blob = new Blob([JSON.stringify(rows, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `projects-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-  };
+  const PROJECT_COLS = [
+    { key: "name", label: "Name" },
+    { key: "brief", label: "Brief" },
+    { key: "status", label: "Status" },
+    { key: "deadline", label: "Deadline" },
+    { key: "companyId", label: "Company" },
+    { key: "contactId", label: "Contact" },
+    { key: "tags", label: "Tags" },
+    { key: "createdAt", label: "Created" },
+  ];
 
   const importProjects = async (file: File) => {
     try {
@@ -142,9 +144,12 @@ function ProjectsPage() {
             <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} className="font-bold">
               <Upload className="h-3.5 w-3.5" /> Import
             </Button>
-            <Button variant="outline" size="sm" onClick={() => exportProjects()} className="font-bold">
-              <Download className="h-3.5 w-3.5" /> Export
-            </Button>
+            <ExportMenu
+              filenameBase="projects"
+              title="MetaEdge Creatives — Projects"
+              rows={filtered}
+              columns={PROJECT_COLS}
+            />
             <input
               ref={fileRef}
               type="file"
@@ -236,13 +241,14 @@ function ProjectsPage() {
             </label>
             <span className="text-xs" style={{ color: "#666" }}>{selected.size} selected</span>
             <div className="ml-auto flex flex-wrap items-center gap-2">
-              <Button
-                variant="outline" size="sm" disabled={selected.size === 0}
-                onClick={() => exportProjects(projects.filter((p) => selected.has(p.id)))}
-                className="font-bold"
-              >
-                <Download className="h-3.5 w-3.5" /> Export selected
-              </Button>
+              <ExportMenu
+                label="Export selected"
+                filenameBase="projects-selected"
+                title="MetaEdge Creatives — Selected Projects"
+                rows={projects.filter((p) => selected.has(p.id))}
+                columns={PROJECT_COLS}
+                disabled={selected.size === 0}
+              />
               <Select
                 value={bulkStatus}
                 onValueChange={(v) => {
