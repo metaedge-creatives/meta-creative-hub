@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useCRM } from "@/lib/crm/store";
 import { useCurrentClientUser } from "@/lib/crm/hooks";
 import { formatCurrency, formatDate } from "@/lib/crm/hooks";
-import { FileText, ScrollText, CreditCard, LifeBuoy, ArrowRight, Sparkles } from "lucide-react";
+import { FileText, ScrollText, CreditCard, LifeBuoy, ArrowRight, Sparkles, CalendarClock } from "lucide-react";
 
 export const Route = createFileRoute("/portal/")({
   head: () => ({ meta: [{ title: "Dashboard · Client Portal" }] }),
@@ -78,18 +78,18 @@ function PortalDashboard() {
             </p>
           </div>
           <Link
-            to="/portal/support"
+            to="/portal/consultation"
             className="group relative inline-flex shrink-0 items-center gap-3 self-start rounded-2xl bg-white px-6 py-4 text-primary shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)] transition hover:-translate-y-0.5 hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)]"
           >
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white">
-              <Sparkles className="h-5 w-5" />
+              <CalendarClock className="h-5 w-5" />
             </span>
             <span className="flex flex-col leading-tight">
               <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary/70">
-                New
+                Free · 30 min
               </span>
               <span className="text-lg font-black tracking-tight text-neutral-900">
-                Start a request
+                Book a consultation
               </span>
             </span>
             <ArrowRight className="ml-2 h-5 w-5 text-primary transition group-hover:translate-x-1" />

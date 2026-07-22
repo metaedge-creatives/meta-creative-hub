@@ -318,6 +318,7 @@ export interface ClientPortalPermissions {
   spending: boolean;
   support: boolean;
   settings: boolean;
+  consultation: boolean;
 }
 export interface ClientUser {
   id: string;
