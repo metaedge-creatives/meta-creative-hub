@@ -71,7 +71,7 @@ function toPDF(
       }, new Set()),
     )
       .slice(0, 8)
-      .map((key) => ({ key }));
+      .map((key): Col => ({ key }));
 
   const colW = (pageW - margin * 2) / Math.max(cols.length, 1);
   let y = margin + 46;
