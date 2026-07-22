@@ -144,9 +144,12 @@ function ProjectsPage() {
             <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} className="font-bold">
               <Upload className="h-3.5 w-3.5" /> Import
             </Button>
-            <Button variant="outline" size="sm" onClick={() => exportProjects()} className="font-bold">
-              <Download className="h-3.5 w-3.5" /> Export
-            </Button>
+            <ExportMenu
+              filenameBase="projects"
+              title="MetaEdge Creatives — Projects"
+              rows={filtered}
+              columns={PROJECT_COLS}
+            />
             <input
               ref={fileRef}
               type="file"
