@@ -1,12 +1,41 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { z } from "zod";
+import { toast } from "sonner";
 import { useCRM } from "@/lib/crm/store";
 import { useCurrentClientUser } from "@/lib/crm/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Layers, Send, CheckCircle2, Search, MessageSquarePlus, ClipboardList, ArrowRight } from "lucide-react";
+import { Layers, Send, CheckCircle2, Search, MessageSquarePlus, ClipboardList, ArrowRight, Loader2, AlertCircle } from "lucide-react";
+
+const TITLE_MAX = 120;
+const DESC_MAX = 2000;
+const BUDGET_MAX = 10_000_000;
+
+const requestSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(3, "Title must be at least 3 characters")
+    .max(TITLE_MAX, `Title must be under ${TITLE_MAX} characters`),
+  description: z
+    .string()
+    .trim()
+    .max(DESC_MAX, `Description must be under ${DESC_MAX} characters`)
+    .optional()
+    .or(z.literal("")),
+  budget: z
+    .string()
+    .trim()
+    .optional()
+    .refine((v) => !v || (/^\d+(\.\d{1,2})?$/.test(v) && Number(v) > 0 && Number(v) <= BUDGET_MAX), {
+      message: "Enter a positive amount up to 10,000,000",
+    }),
+});
+
+type FieldErrors = Partial<Record<"title" | "description" | "budget" | "form", string>>;
 
 export const Route = createFileRoute("/portal/services")({
   head: () => ({ meta: [{ title: "Services · Client Portal" }] }),
