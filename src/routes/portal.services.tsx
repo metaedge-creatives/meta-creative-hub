@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useCRM } from "@/lib/crm/store";
 import { useCurrentClientUser } from "@/lib/crm/hooks";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Layers, Send, CheckCircle2, Search, MessageSquarePlus } from "lucide-react";
+import { Layers, Send, CheckCircle2, Search, MessageSquarePlus, ClipboardList, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/portal/services")({
   head: () => ({ meta: [{ title: "Services · Client Portal" }] }),
@@ -132,16 +132,25 @@ function PortalServices() {
 
       {mine.length > 0 && (
         <div className="mt-8">
-          <div className="mb-2 text-[10px] font-black uppercase tracking-widest text-primary">Your requests</div>
+          <div className="mb-2 flex items-center justify-between">
+            <div className="text-[10px] font-black uppercase tracking-widest text-primary">Your recent requests</div>
+            <Link to="/portal/requests" className="inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-wider text-primary hover:underline">
+              <ClipboardList className="h-3 w-3" /> Track all <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
           <div className="space-y-2">
-            {mine.map((r) => (
-              <div key={r.id} className="flex items-center justify-between rounded-xl border border-divider bg-white p-3 text-sm">
+            {mine.slice(0, 3).map((r) => (
+              <Link
+                key={r.id}
+                to="/portal/requests"
+                className="flex items-center justify-between rounded-xl border border-divider bg-white p-3 text-sm transition hover:border-primary/40"
+              >
                 <div className="min-w-0">
                   <div className="truncate font-black">{r.title}</div>
                   <div className="truncate text-[11px]" style={{ color: "#888" }}>{r.description}</div>
                 </div>
-                <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-primary">{r.status}</span>
-              </div>
+                <span className="ml-3 shrink-0 rounded-full bg-accent px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-primary">{r.status}</span>
+              </Link>
             ))}
           </div>
         </div>

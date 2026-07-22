@@ -360,6 +360,11 @@ export interface ClientUser {
 }
 
 export type ServiceRequestStatus = "new" | "reviewing" | "quoted" | "declined" | "converted";
+export interface ServiceRequestEvent {
+  at: string;
+  status: ServiceRequestStatus;
+  note?: string;
+}
 export interface ServiceRequest {
   id: string;
   clientUserId: string;
@@ -371,6 +376,8 @@ export interface ServiceRequest {
   budget?: number;
   status: ServiceRequestStatus;
   createdAt: string;
+  updatedAt?: string;
+  history?: ServiceRequestEvent[];
 }
 
 export type ClientReportPeriod = "weekly" | "monthly" | "custom";

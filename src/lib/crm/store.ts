@@ -767,11 +767,15 @@ export const useCRM = create<CRMState & Actions>()(
       },
 
       addServiceRequest: (r) => {
+        const now = new Date().toISOString();
+        const status = r.status ?? "new";
         const item: ServiceRequest = {
           ...r,
           id: uid(),
-          status: r.status ?? "new",
-          createdAt: new Date().toISOString(),
+          status,
+          createdAt: now,
+          updatedAt: now,
+          history: [{ at: now, status, note: "Request submitted" }],
         };
         set((s) => ({ serviceRequests: [item, ...s.serviceRequests] }));
         get().addNotification({
@@ -784,11 +788,18 @@ export const useCRM = create<CRMState & Actions>()(
       },
       updateServiceRequest: (id, patch) =>
         set((s) => ({
-          serviceRequests: s.serviceRequests.map((r) => (r.id === id ? { ...r, ...patch } : r)),
+          serviceRequests: s.serviceRequests.map((r) =>
+            r.id === id ? { ...r, ...patch, updatedAt: new Date().toISOString() } : r,
+          ),
         })),
       setServiceRequestStatus: (id, status) =>
         set((s) => ({
-          serviceRequests: s.serviceRequests.map((r) => (r.id === id ? { ...r, status } : r)),
+          serviceRequests: s.serviceRequests.map((r) => {
+            if (r.id !== id) return r;
+            const at = new Date().toISOString();
+            const history = [...(r.history ?? []), { at, status }];
+            return { ...r, status, updatedAt: at, history };
+          }),
         })),
       deleteServiceRequest: (id) =>
         set((s) => ({ serviceRequests: s.serviceRequests.filter((r) => r.id !== id) })),
