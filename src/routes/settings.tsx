@@ -1214,6 +1214,7 @@ function CompanyLogoSection() {
 function ModulesToggleSection() {
   const enabled = useCRM((s) => s.moduleSettings["main.modules"]) ?? EMPTY_OBJ;
   const set = useCRM((s) => s.setSetting);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
   const list: { key: string; label: string }[] = [
     { key: "clients", label: "Clients" }, { key: "leads", label: "Leads" },
     { key: "projects", label: "Projects" }, { key: "tasks", label: "Tasks" },
@@ -1225,13 +1226,21 @@ function ModulesToggleSection() {
     { key: "emailMarketing", label: "Email Marketing" }, { key: "products", label: "Products" },
   ];
   return (
-    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-      {list.map((m) => (
-        <div key={m.key} className="flex items-center justify-between rounded-lg border border-divider bg-background px-4 py-3">
-          <span className="text-sm font-bold">{m.label}</span>
-          <Switch checked={enabled[m.key] ?? true} onCheckedChange={(v) => set("main.modules", m.key, v)} />
-        </div>
-      ))}
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+        {list.map((m) => (
+          <div key={m.key} className="flex items-center justify-between rounded-lg border border-divider bg-background px-4 py-3">
+            <span className="text-sm font-bold">{m.label}</span>
+            <Switch checked={enabled[m.key] ?? true} onCheckedChange={(v) => { set("main.modules", m.key, v); setSavedAt(Date.now()); setTimeout(() => setSavedAt(null), 1500); }} />
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-between">
+        <p className="text-[11px]" style={{ color: "#999" }}>Changes save automatically as you toggle.</p>
+        <Button onClick={() => { setSavedAt(Date.now()); setTimeout(() => setSavedAt(null), 1500); }} className="font-bold">
+          {savedAt ? "Saved ✓" : "Save changes"}
+        </Button>
+      </div>
     </div>
   );
 }
