@@ -216,6 +216,7 @@ export interface Invoice {
   clientName: string;
   clientEmail?: string;
   clientAddress?: string;
+  clientUserId?: string;
   companyId?: string;
   contactId?: string;
   issueDate: string;
