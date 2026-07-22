@@ -79,17 +79,20 @@ function LoginPage() {
   // Brand panel starts on LEFT (default) or RIGHT (mirror).
   //  - exit-to-portal: brand always slides OUT toward its OWN side (left→left, right→right)
   //  - enter (arrived from portal, mirror=true, brand on RIGHT): comes IN from RIGHT
+  // Cross-swap direction rules:
+  //  Exit: each panel slides toward the OPPOSITE side (so it feels like they cross).
+  //  Enter: each panel slides IN from the OPPOSITE side of its new position.
   const brandAnim =
-    phase === "exit-to-portal"
-      ? mirror ? "swap-out-right" : "swap-out-left"
-      : phase === "enter"
-        ? "swap-in-right"
-        : "";
-  const formAnim =
     phase === "exit-to-portal"
       ? mirror ? "swap-out-left" : "swap-out-right"
       : phase === "enter"
         ? "swap-in-left"
+        : "";
+  const formAnim =
+    phase === "exit-to-portal"
+      ? mirror ? "swap-out-right" : "swap-out-left"
+      : phase === "enter"
+        ? "swap-in-right"
         : "";
 
 
