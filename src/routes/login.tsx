@@ -170,7 +170,7 @@ function LoginPage() {
       </div>
 
       {/* RIGHT — role picker + form */}
-      <div className="relative flex w-full items-center justify-center px-6 py-12 lg:w-1/2">
+      <div className={`relative flex w-full items-center justify-center px-6 py-12 lg:w-1/2 ${formAnim}`}>
         <div
           className="aurora-blob lg:hidden"
           style={{ background: "radial-gradient(circle,#FDF5F7,transparent 65%)", width: 420, height: 420, top: -140, right: -60 }}
