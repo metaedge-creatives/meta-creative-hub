@@ -43,6 +43,32 @@ const uid = () =>
     ? crypto.randomUUID()
     : Math.random().toString(36).slice(2) + Date.now().toString(36);
 
+function resolveClientUserId(
+  clientUsers: ClientUser[],
+  ref: { email?: string; name?: string; company?: string },
+): string | undefined {
+  const email = ref.email?.trim().toLowerCase();
+  const name = ref.name?.trim().toLowerCase();
+  const company = ref.company?.trim().toLowerCase();
+  if (email) {
+    const hit = clientUsers.find((c) => c.email.trim().toLowerCase() === email);
+    if (hit) return hit.id;
+  }
+  if (name) {
+    const hit = clientUsers.find((c) => {
+      const cn = c.name.trim().toLowerCase();
+      const cc = (c.companyName || "").trim().toLowerCase();
+      return cn === name || (cc && cc === name);
+    });
+    if (hit) return hit.id;
+  }
+  if (company) {
+    const hit = clientUsers.find((c) => (c.companyName || "").trim().toLowerCase() === company);
+    if (hit) return hit.id;
+  }
+  return undefined;
+}
+
 const allPerms: Permissions = {
   contacts: true,
   deals: true,
