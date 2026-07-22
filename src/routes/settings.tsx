@@ -426,6 +426,7 @@ const TREE: Section[] = [
         { slug: "team", label: "Team & Permissions", config: { kind: "component", render: () => <TeamSection /> }},
         { slug: "email-api", label: "Email API", config: { kind: "component", render: () => <EmailApiSection /> }},
         { slug: "integrations", label: "Integrations", config: { kind: "component", render: () => <IntegrationsSection /> }},
+        { slug: "cloud-sync", label: "Cloud Sync", config: { kind: "component", render: () => <CloudSyncSection /> }},
         { slug: "data", label: "Backup & Restore", config: { kind: "component", render: () => <DataSection /> }},
       ]},
     ],
