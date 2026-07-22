@@ -45,9 +45,25 @@ function ClientUsersPage() {
   const add = useCRM((s) => s.addClientUser);
   const update = useCRM((s) => s.updateClientUser);
   const del = useCRM((s) => s.deleteClientUser);
+  const resend = useCRM((s) => s.resendClientInvite);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<ClientUser | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
   if (!can) return <NoAccess module="Client Users" />;
+
+  const handleResend = (c: ClientUser) => {
+    setBusyId(c.id);
+    const res = resend(c.id);
+    if (res.ok) {
+      toast.success(`Invite resent to ${c.email}`, {
+        description: `Total invites sent: ${res.user?.inviteCount ?? 1}`,
+        icon: <Check className="h-4 w-4" />,
+      });
+    } else {
+      toast.error(res.error ?? "Failed to resend invite");
+    }
+    setTimeout(() => setBusyId(null), 600);
+  };
 
   return (
     <div>
@@ -59,26 +75,44 @@ function ClientUsersPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {items.map((c) => {
-            const st = STATUSES.find((s) => s.id === c.status)!;
+            const canResend = c.status !== "active";
             return (
               <div key={c.id} className="rounded-2xl border border-divider bg-card p-5 brand-shadow">
                 <div className="h-1 -mx-5 -mt-5 mb-4 bg-primary" />
-                <div className="flex items-center gap-3">
+                <div className="flex items-start gap-3">
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-accent text-sm font-black text-primary">{initials(c.name)}</span>
                   <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-black">{c.name}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="truncate text-sm font-black">{c.name}</div>
+                      <StatusBadge status={c.status} />
+                    </div>
                     <div className="truncate text-[11px]" style={{ color: "#999" }}>{c.email}</div>
                   </div>
                 </div>
                 <div className="mt-3 text-[12px]" style={{ color: "#666" }}>{c.companyName || "—"}</div>
-                <div className="mt-3 flex items-center justify-between">
-                  <span className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white" style={{ background: st.color }}>{st.label}</span>
+                <div className="mt-4 flex items-center justify-between gap-2">
+                  <Button
+                    size="sm"
+                    variant={canResend ? "default" : "outline"}
+                    disabled={!canResend || busyId === c.id}
+                    onClick={() => handleResend(c)}
+                    className="font-bold"
+                    title={canResend ? "Resend the invite email" : "This client is already active"}
+                  >
+                    <Send className="h-3.5 w-3.5" />
+                    {busyId === c.id ? "Sending…" : canResend ? "Resend invite" : "Active"}
+                  </Button>
                   <div className="flex gap-1">
                     <Button size="sm" variant="outline" onClick={() => { setEditing(c); setOpen(true); }}><Edit className="h-3.5 w-3.5" /></Button>
                     <Button size="sm" variant="outline" onClick={() => { if (confirm("Delete?")) del(c.id); }}><Trash2 className="h-3.5 w-3.5" /></Button>
                   </div>
                 </div>
-                <div className="mt-2 text-[10px]" style={{ color: "#999" }}>Invited {formatDate(c.createdAt)}</div>
+                <div className="mt-3 flex items-center justify-between text-[10px]" style={{ color: "#999" }}>
+                  <span>Invited {formatDate(c.createdAt)}</span>
+                  {c.lastInvitedAt && (
+                    <span>Last resent {formatDate(c.lastInvitedAt)} · {c.inviteCount ?? 1}×</span>
+                  )}
+                </div>
               </div>
             );
           })}
