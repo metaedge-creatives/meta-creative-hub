@@ -44,6 +44,7 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { to: "/portal/projects", label: "Projects", icon: FolderKanban, key: "projects" },
       { to: "/portal/services", label: "Services", icon: Layers, key: "services" },
+      { to: "/portal/requests", label: "My Requests", icon: MessagesSquare, key: "requests" },
       { to: "/portal/proposals", label: "Proposals", icon: FileText, key: "proposals" },
       { to: "/portal/contracts", label: "Contracts", icon: ScrollText, key: "contracts" },
     ],

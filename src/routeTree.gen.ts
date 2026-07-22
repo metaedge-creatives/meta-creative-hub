@@ -50,6 +50,7 @@ import { Route as PortalSupportRouteImport } from './routes/portal.support'
 import { Route as PortalSpendingRouteImport } from './routes/portal.spending'
 import { Route as PortalSettingsRouteImport } from './routes/portal.settings'
 import { Route as PortalServicesRouteImport } from './routes/portal.services'
+import { Route as PortalRequestsRouteImport } from './routes/portal.requests'
 import { Route as PortalReportsRouteImport } from './routes/portal.reports'
 import { Route as PortalProposalsRouteImport } from './routes/portal.proposals'
 import { Route as PortalProjectsRouteImport } from './routes/portal.projects'
@@ -267,6 +268,11 @@ const PortalServicesRoute = PortalServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => PortalRoute,
 } as any)
+const PortalRequestsRoute = PortalRequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
+  getParentRoute: () => PortalRoute,
+} as any)
 const PortalReportsRoute = PortalReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -368,6 +374,7 @@ export interface FileRoutesByFullPath {
   '/portal/projects': typeof PortalProjectsRoute
   '/portal/proposals': typeof PortalProposalsRoute
   '/portal/reports': typeof PortalReportsRoute
+  '/portal/requests': typeof PortalRequestsRoute
   '/portal/services': typeof PortalServicesRoute
   '/portal/settings': typeof PortalSettingsRoute
   '/portal/spending': typeof PortalSpendingRoute
@@ -421,6 +428,7 @@ export interface FileRoutesByTo {
   '/portal/projects': typeof PortalProjectsRoute
   '/portal/proposals': typeof PortalProposalsRoute
   '/portal/reports': typeof PortalReportsRoute
+  '/portal/requests': typeof PortalRequestsRoute
   '/portal/services': typeof PortalServicesRoute
   '/portal/settings': typeof PortalSettingsRoute
   '/portal/spending': typeof PortalSpendingRoute
@@ -476,6 +484,7 @@ export interface FileRoutesById {
   '/portal/projects': typeof PortalProjectsRoute
   '/portal/proposals': typeof PortalProposalsRoute
   '/portal/reports': typeof PortalReportsRoute
+  '/portal/requests': typeof PortalRequestsRoute
   '/portal/services': typeof PortalServicesRoute
   '/portal/settings': typeof PortalSettingsRoute
   '/portal/spending': typeof PortalSpendingRoute
@@ -532,6 +541,7 @@ export interface FileRouteTypes {
     | '/portal/projects'
     | '/portal/proposals'
     | '/portal/reports'
+    | '/portal/requests'
     | '/portal/services'
     | '/portal/settings'
     | '/portal/spending'
@@ -585,6 +595,7 @@ export interface FileRouteTypes {
     | '/portal/projects'
     | '/portal/proposals'
     | '/portal/reports'
+    | '/portal/requests'
     | '/portal/services'
     | '/portal/settings'
     | '/portal/spending'
@@ -639,6 +650,7 @@ export interface FileRouteTypes {
     | '/portal/projects'
     | '/portal/proposals'
     | '/portal/reports'
+    | '/portal/requests'
     | '/portal/services'
     | '/portal/settings'
     | '/portal/spending'
@@ -977,6 +989,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalServicesRouteImport
       parentRoute: typeof PortalRoute
     }
+    '/portal/requests': {
+      id: '/portal/requests'
+      path: '/requests'
+      fullPath: '/portal/requests'
+      preLoaderRoute: typeof PortalRequestsRouteImport
+      parentRoute: typeof PortalRoute
+    }
     '/portal/reports': {
       id: '/portal/reports'
       path: '/reports'
@@ -1087,6 +1106,7 @@ interface PortalRouteChildren {
   PortalProjectsRoute: typeof PortalProjectsRoute
   PortalProposalsRoute: typeof PortalProposalsRoute
   PortalReportsRoute: typeof PortalReportsRoute
+  PortalRequestsRoute: typeof PortalRequestsRoute
   PortalServicesRoute: typeof PortalServicesRoute
   PortalSettingsRoute: typeof PortalSettingsRoute
   PortalSpendingRoute: typeof PortalSpendingRoute
@@ -1102,6 +1122,7 @@ const PortalRouteChildren: PortalRouteChildren = {
   PortalProjectsRoute: PortalProjectsRoute,
   PortalProposalsRoute: PortalProposalsRoute,
   PortalReportsRoute: PortalReportsRoute,
+  PortalRequestsRoute: PortalRequestsRoute,
   PortalServicesRoute: PortalServicesRoute,
   PortalSettingsRoute: PortalSettingsRoute,
   PortalSpendingRoute: PortalSpendingRoute,
