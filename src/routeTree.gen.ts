@@ -50,6 +50,7 @@ import { Route as PortalSettingsRouteImport } from './routes/portal.settings'
 import { Route as PortalPaymentsRouteImport } from './routes/portal.payments'
 import { Route as PortalInvoicesRouteImport } from './routes/portal.invoices'
 import { Route as PortalContractsRouteImport } from './routes/portal.contracts'
+import { Route as PortalConsultationRouteImport } from './routes/portal.consultation'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as CustomersClientUsersRouteImport } from './routes/customers.client-users'
 import { Route as ContactsIdRouteImport } from './routes/contacts.$id'
@@ -260,6 +261,11 @@ const PortalContractsRoute = PortalContractsRouteImport.update({
   path: '/contracts',
   getParentRoute: () => PortalRoute,
 } as any)
+const PortalConsultationRoute = PortalConsultationRouteImport.update({
+  id: '/consultation',
+  path: '/consultation',
+  getParentRoute: () => PortalRoute,
+} as any)
 const DealsIdRoute = DealsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -317,6 +323,7 @@ export interface FileRoutesByFullPath {
   '/contacts/$id': typeof ContactsIdRoute
   '/customers/client-users': typeof CustomersClientUsersRoute
   '/deals/$id': typeof DealsIdRoute
+  '/portal/consultation': typeof PortalConsultationRoute
   '/portal/contracts': typeof PortalContractsRoute
   '/portal/invoices': typeof PortalInvoicesRoute
   '/portal/payments': typeof PortalPaymentsRoute
@@ -363,6 +370,7 @@ export interface FileRoutesByTo {
   '/contacts/$id': typeof ContactsIdRoute
   '/customers/client-users': typeof CustomersClientUsersRoute
   '/deals/$id': typeof DealsIdRoute
+  '/portal/consultation': typeof PortalConsultationRoute
   '/portal/contracts': typeof PortalContractsRoute
   '/portal/invoices': typeof PortalInvoicesRoute
   '/portal/payments': typeof PortalPaymentsRoute
@@ -411,6 +419,7 @@ export interface FileRoutesById {
   '/contacts/$id': typeof ContactsIdRoute
   '/customers/client-users': typeof CustomersClientUsersRoute
   '/deals/$id': typeof DealsIdRoute
+  '/portal/consultation': typeof PortalConsultationRoute
   '/portal/contracts': typeof PortalContractsRoute
   '/portal/invoices': typeof PortalInvoicesRoute
   '/portal/payments': typeof PortalPaymentsRoute
@@ -460,6 +469,7 @@ export interface FileRouteTypes {
     | '/contacts/$id'
     | '/customers/client-users'
     | '/deals/$id'
+    | '/portal/consultation'
     | '/portal/contracts'
     | '/portal/invoices'
     | '/portal/payments'
@@ -506,6 +516,7 @@ export interface FileRouteTypes {
     | '/contacts/$id'
     | '/customers/client-users'
     | '/deals/$id'
+    | '/portal/consultation'
     | '/portal/contracts'
     | '/portal/invoices'
     | '/portal/payments'
@@ -553,6 +564,7 @@ export interface FileRouteTypes {
     | '/contacts/$id'
     | '/customers/client-users'
     | '/deals/$id'
+    | '/portal/consultation'
     | '/portal/contracts'
     | '/portal/invoices'
     | '/portal/payments'
@@ -891,6 +903,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalContractsRouteImport
       parentRoute: typeof PortalRoute
     }
+    '/portal/consultation': {
+      id: '/portal/consultation'
+      path: '/consultation'
+      fullPath: '/portal/consultation'
+      preLoaderRoute: typeof PortalConsultationRouteImport
+      parentRoute: typeof PortalRoute
+    }
     '/deals/$id': {
       id: '/deals/$id'
       path: '/$id'
@@ -945,6 +964,7 @@ const DealsRouteChildren: DealsRouteChildren = {
 const DealsRouteWithChildren = DealsRoute._addFileChildren(DealsRouteChildren)
 
 interface PortalRouteChildren {
+  PortalConsultationRoute: typeof PortalConsultationRoute
   PortalContractsRoute: typeof PortalContractsRoute
   PortalInvoicesRoute: typeof PortalInvoicesRoute
   PortalPaymentsRoute: typeof PortalPaymentsRoute
@@ -955,6 +975,7 @@ interface PortalRouteChildren {
 }
 
 const PortalRouteChildren: PortalRouteChildren = {
+  PortalConsultationRoute: PortalConsultationRoute,
   PortalContractsRoute: PortalContractsRoute,
   PortalInvoicesRoute: PortalInvoicesRoute,
   PortalPaymentsRoute: PortalPaymentsRoute,
@@ -1020,13 +1041,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
