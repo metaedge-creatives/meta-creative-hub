@@ -70,7 +70,7 @@ function PortalDashboard() {
             <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest">
               <Sparkles className="h-3 w-3" /> Client dashboard
             </div>
-            <h1 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">
+            <h1 className="mt-3 text-3xl font-black tracking-tight text-white md:text-4xl">
               Hi {client?.name?.split(" ")[0] || "there"}, welcome back 👋
             </h1>
             <p className="mt-2 max-w-lg text-sm text-white/80">
