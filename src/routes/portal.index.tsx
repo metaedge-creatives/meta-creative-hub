@@ -12,13 +12,6 @@ export const Route = createFileRoute("/portal/")({
 
 const EMPTY: any[] = [];
 
-function matchClient(name: string, clientName: string, clientCompany?: string) {
-  const n = name.toLowerCase();
-  if (n === clientName.toLowerCase()) return true;
-  if (clientCompany && n === clientCompany.toLowerCase()) return true;
-  return false;
-}
-
 function PortalDashboard() {
   const client = useCurrentClientUser();
   const invoices = useCRM((s) => s.invoices) ?? EMPTY;
@@ -28,15 +21,21 @@ function PortalDashboard() {
 
   const my = useMemo(() => {
     if (!client) return { inv: [], con: [], tix: [], pay: [] as any[] };
-    const cn = client.name;
-    const cc = client.companyName;
     return {
-      inv: invoices.filter((i: any) => matchClient(i.clientName, cn, cc)),
-      con: contracts.filter((c: any) => matchClient(c.clientName, cn, cc)),
-      tix: tickets.filter((t: any) => matchClient(t.clientName, cn, cc)),
-      pay: paymentsList.filter((p: any) => matchClient(p.meta?.clientName ?? "", cn, cc)),
+      inv: invoices.filter((i: any) => isOwnedByClient(i, client)),
+      con: contracts.filter((c: any) => isOwnedByClient(c, client)),
+      tix: tickets.filter((t: any) =>
+        isOwnedByClient({ clientName: t.clientName, clientEmail: t.clientEmail, clientUserId: t.clientUserId }, client),
+      ),
+      pay: paymentsList.filter((p: any) =>
+        isOwnedByClient(
+          { clientName: p.meta?.clientName, clientEmail: p.meta?.clientEmail, clientUserId: p.meta?.clientUserId },
+          client,
+        ),
+      ),
     };
   }, [client, invoices, contracts, tickets, paymentsList]);
+
 
   const outstanding = my.inv
     .filter((i: any) => i.status !== "paid" && i.status !== "cancelled")
