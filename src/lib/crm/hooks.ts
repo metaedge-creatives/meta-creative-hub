@@ -30,6 +30,14 @@ export function useClientCan(key: keyof ClientPortalPermissions) {
   return perms[key] !== false;
 }
 
+export function usePaymentsModuleEnabled() {
+  return useCRM((s) => Boolean(s.moduleSettings?.modules?.payments));
+}
+
+export function useStripeConnected() {
+  return useCRM((s) => Boolean(s.moduleSettings?.modules?.stripeConnected));
+}
+
 export function initials(name: string) {
   return name
     .split(" ")
