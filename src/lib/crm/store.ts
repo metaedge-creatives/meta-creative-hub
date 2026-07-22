@@ -548,12 +548,18 @@ export const useCRM = create<CRMState & Actions>()(
       addClientUser: (c) => {
         const item: ClientUser = { ...c, id: uid(), createdAt: new Date().toISOString() };
         set((s) => ({ clientUsers: [item, ...s.clientUsers] }));
+        void pushClientUser(item);
         return item;
       },
-      updateClientUser: (id, patch) =>
-        set((s) => ({ clientUsers: s.clientUsers.map((c) => (c.id === id ? { ...c, ...patch } : c)) })),
-      deleteClientUser: (id) =>
-        set((s) => ({ clientUsers: s.clientUsers.filter((c) => c.id !== id) })),
+      updateClientUser: (id, patch) => {
+        set((s) => ({ clientUsers: s.clientUsers.map((c) => (c.id === id ? { ...c, ...patch } : c)) }));
+        const updated = get().clientUsers.find((c) => c.id === id);
+        if (updated) void pushClientUser(updated);
+      },
+      deleteClientUser: (id) => {
+        set((s) => ({ clientUsers: s.clientUsers.filter((c) => c.id !== id) }));
+        void deleteClientUserRemote(id);
+      },
       resendClientInvite: (id) => {
         const user = get().clientUsers.find((c) => c.id === id);
         if (!user) return { ok: false, error: "Client user not found" };
