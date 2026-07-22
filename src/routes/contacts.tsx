@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Download, Upload, Search, Filter, Users, Building2, Mail, CalendarPlus } from "lucide-react";
 import { ExportMenu } from "@/components/crm/ExportMenu";
+import { ImportDialog } from "@/components/crm/ImportDialog";
 
 const EMPTY_ARR: any[] = [];
 const APP_MODULES = [
