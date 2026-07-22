@@ -13,7 +13,17 @@ export const Route = createFileRoute("/portal/services")({
   component: PortalServices,
 });
 
+const DEFAULT_SERVICES: Array<{ name: string; description: string; category: string; price?: number; unit?: string }> = [
+  { name: "Brand Identity", description: "Logo, palette, typography and full brand guidelines.", category: "Branding", price: 1500, unit: "project" },
+  { name: "Website Design & Build", description: "Modern, responsive website tailored to your brand.", category: "Web", price: 3500, unit: "project" },
+  { name: "Social Media Management", description: "Content strategy, design and posting across platforms.", category: "Social", price: 900, unit: "month" },
+  { name: "Performance Ads", description: "Meta & Google ads with weekly performance reports.", category: "Ads", price: 750, unit: "month" },
+  { name: "SEO Optimization", description: "On-page and technical SEO to boost organic traffic.", category: "SEO", price: 600, unit: "month" },
+  { name: "Video Production", description: "Reels, ads and product videos — end-to-end.", category: "Video", price: 1200, unit: "project" },
+];
+
 function PortalServices() {
+
   const client = useCurrentClientUser();
   const products = useCRM((s) => s.getList("products"));
   const addServiceRequest = useCRM((s) => s.addServiceRequest);
@@ -25,10 +35,22 @@ function PortalServices() {
   const [form, setForm] = useState({ title: "", description: "", budget: "" });
   const [sent, setSent] = useState<string | null>(null);
 
+  const catalog = useMemo(() => {
+    if (products.length > 0) return products;
+    // Fallback catalog so the page is never empty for the client.
+    return DEFAULT_SERVICES.map((s) => ({
+      id: `default-${s.name.toLowerCase().replace(/\s+/g, "-")}`,
+      name: s.name,
+      description: s.description,
+      meta: { category: s.category, price: s.price, unit: s.unit },
+    })) as any[];
+  }, [products]);
+
   const services = useMemo(
-    () => products.filter((p) => p.name.toLowerCase().includes(q.toLowerCase())),
-    [products, q],
+    () => catalog.filter((p: any) => p.name.toLowerCase().includes(q.toLowerCase())),
+    [catalog, q],
   );
+
 
   const mine = useMemo(() => {
     if (!client) return [];
