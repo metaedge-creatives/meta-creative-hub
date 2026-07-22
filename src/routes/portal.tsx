@@ -196,12 +196,12 @@ function PortalAuthScreen() {
     setTimeout(() => el?.focus(), 350);
   };
 
-  // Brand panel starts on LEFT. On exit it slides LEFT (out). On enter from /login it comes IN from RIGHT (swap effect).
+  // Cross-swap: brand (LEFT) exits toward RIGHT; form (RIGHT) exits toward LEFT.
+  // On enter from /login, brand slides IN from RIGHT, form slides IN from LEFT.
   const brandAnim =
-    phase === "exit" ? "swap-out-left" : phase === "enter" ? "swap-in-right" : "";
-  // Form panel starts on RIGHT. On exit slides RIGHT. On enter comes IN from LEFT.
+    phase === "exit" ? "swap-out-right" : phase === "enter" ? "swap-in-right" : "";
   const formAnim =
-    phase === "exit" ? "swap-out-right" : phase === "enter" ? "swap-in-left" : "";
+    phase === "exit" ? "swap-out-left" : phase === "enter" ? "swap-in-left" : "";
 
   return (
     <div className="relative flex min-h-screen overflow-hidden bg-background">
