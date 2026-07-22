@@ -214,16 +214,8 @@ function PortalAuthScreen() {
         </div>
 
         <div className="relative z-10 max-w-md text-white">
-          <button
-            type="button"
-            onClick={focusForm}
-            className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.2em] text-white backdrop-blur-md transition hover:bg-white/20"
-          >
-            <LayoutDashboard className="h-3.5 w-3.5" />
-            Go to Dashboard
-            <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
-          </button>
-          <h1 className="mt-5 text-5xl font-black leading-[1.02] tracking-tight text-white">
+          <h1 className="text-5xl font-black leading-[1.02] tracking-tight text-white">
+
             Everything you need,<br /><span className="italic text-white/80">in one place.</span>
           </h1>
           <p className="mt-4 max-w-sm text-sm text-white/70">
