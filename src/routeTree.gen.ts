@@ -33,6 +33,7 @@ import { Route as LeadsRouteImport } from './routes/leads'
 import { Route as KnowledgebaseRouteImport } from './routes/knowledgebase'
 import { Route as InvoicesRouteImport } from './routes/invoices'
 import { Route as FilesRouteImport } from './routes/files'
+import { Route as ExportHistoryRouteImport } from './routes/export-history'
 import { Route as ExpensesRouteImport } from './routes/expenses'
 import { Route as EstimatesRouteImport } from './routes/estimates'
 import { Route as EmailMarketingRouteImport } from './routes/email-marketing'
@@ -181,6 +182,11 @@ const FilesRoute = FilesRouteImport.update({
   path: '/files',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExportHistoryRoute = ExportHistoryRouteImport.update({
+  id: '/export-history',
+  path: '/export-history',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExpensesRoute = ExpensesRouteImport.update({
   id: '/expenses',
   path: '/expenses',
@@ -326,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/email-marketing': typeof EmailMarketingRoute
   '/estimates': typeof EstimatesRoute
   '/expenses': typeof ExpensesRoute
+  '/export-history': typeof ExportHistoryRoute
   '/files': typeof FilesRoute
   '/invoices': typeof InvoicesRoute
   '/knowledgebase': typeof KnowledgebaseRoute
@@ -379,6 +386,7 @@ export interface FileRoutesByTo {
   '/email-marketing': typeof EmailMarketingRoute
   '/estimates': typeof EstimatesRoute
   '/expenses': typeof ExpensesRoute
+  '/export-history': typeof ExportHistoryRoute
   '/files': typeof FilesRoute
   '/invoices': typeof InvoicesRoute
   '/knowledgebase': typeof KnowledgebaseRoute
@@ -432,6 +440,7 @@ export interface FileRoutesById {
   '/email-marketing': typeof EmailMarketingRoute
   '/estimates': typeof EstimatesRoute
   '/expenses': typeof ExpensesRoute
+  '/export-history': typeof ExportHistoryRoute
   '/files': typeof FilesRoute
   '/invoices': typeof InvoicesRoute
   '/knowledgebase': typeof KnowledgebaseRoute
@@ -487,6 +496,7 @@ export interface FileRouteTypes {
     | '/email-marketing'
     | '/estimates'
     | '/expenses'
+    | '/export-history'
     | '/files'
     | '/invoices'
     | '/knowledgebase'
@@ -540,6 +550,7 @@ export interface FileRouteTypes {
     | '/email-marketing'
     | '/estimates'
     | '/expenses'
+    | '/export-history'
     | '/files'
     | '/invoices'
     | '/knowledgebase'
@@ -592,6 +603,7 @@ export interface FileRouteTypes {
     | '/email-marketing'
     | '/estimates'
     | '/expenses'
+    | '/export-history'
     | '/files'
     | '/invoices'
     | '/knowledgebase'
@@ -646,6 +658,7 @@ export interface RootRouteChildren {
   EmailMarketingRoute: typeof EmailMarketingRoute
   EstimatesRoute: typeof EstimatesRoute
   ExpensesRoute: typeof ExpensesRoute
+  ExportHistoryRoute: typeof ExportHistoryRoute
   FilesRoute: typeof FilesRoute
   InvoicesRoute: typeof InvoicesRoute
   KnowledgebaseRoute: typeof KnowledgebaseRoute
@@ -843,6 +856,13 @@ declare module '@tanstack/react-router' {
       path: '/files'
       fullPath: '/files'
       preLoaderRoute: typeof FilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/export-history': {
+      id: '/export-history'
+      path: '/export-history'
+      fullPath: '/export-history'
+      preLoaderRoute: typeof ExportHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/expenses': {
@@ -1115,6 +1135,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmailMarketingRoute: EmailMarketingRoute,
   EstimatesRoute: EstimatesRoute,
   ExpensesRoute: ExpensesRoute,
+  ExportHistoryRoute: ExportHistoryRoute,
   FilesRoute: FilesRoute,
   InvoicesRoute: InvoicesRoute,
   KnowledgebaseRoute: KnowledgebaseRoute,
