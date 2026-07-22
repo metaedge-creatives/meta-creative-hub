@@ -84,10 +84,7 @@ function LoginPage() {
         </div>
 
         <div className="relative z-10 max-w-md text-white">
-          <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.2em] text-white/90">
-            <Sparkles className="h-3 w-3" /> Studio OS · v3
-          </div>
-          <h1 className="mt-5 text-5xl font-black leading-[1.02] tracking-tight text-white">
+          <h1 className="text-5xl font-black leading-[1.02] tracking-tight text-white">
             Where creative <br />
             momentum <span className="italic text-white/80">gets shipped</span>.
           </h1>
@@ -101,13 +98,30 @@ function LoginPage() {
               { icon: Shield, k: "Private", v: "Local by default" },
               { icon: Sparkles, k: "Crafted", v: "Made in-house" },
             ].map((c) => (
-              <div key={c.k} className="glass rounded-xl p-3">
-                <c.icon className="mb-2 h-4 w-4 text-white" />
-                <div className="text-[11px] font-extrabold text-white">{c.k}</div>
-                <div className="text-[10px] text-white/70">{c.v}</div>
+              <div
+                key={c.k}
+                className="group relative overflow-hidden rounded-xl border border-white/25 p-3 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.35),inset_0_1px_0_0_rgba(255,255,255,0.35)] transition-transform hover:-translate-y-0.5"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.18) 100%)",
+                  backdropFilter: "blur(18px) saturate(160%)",
+                }}
+              >
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-xl opacity-70"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 100%)",
+                  }}
+                />
+                <c.icon className="relative mb-2 h-4 w-4 text-white drop-shadow" />
+                <div className="relative text-[11px] font-extrabold text-white">{c.k}</div>
+                <div className="relative text-[10px] text-white/80">{c.v}</div>
               </div>
             ))}
           </div>
+
         </div>
 
         <div className="relative z-10 text-[11px] text-white/50">
