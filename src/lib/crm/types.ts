@@ -312,10 +312,14 @@ export interface EmailCampaign {
 export type ClientUserStatus = "invited" | "active" | "suspended";
 export interface ClientPortalPermissions {
   dashboard: boolean;
+  projects: boolean;
   invoices: boolean;
   contracts: boolean;
   payments: boolean;
   spending: boolean;
+  proposals: boolean;
+  reports: boolean;
+  services: boolean;
   support: boolean;
   settings: boolean;
   consultation: boolean;
@@ -334,6 +338,34 @@ export interface ClientUser {
   permissions?: Partial<ClientPortalPermissions>;
   status: ClientUserStatus;
   createdAt: string;
+}
+
+export type ServiceRequestStatus = "new" | "reviewing" | "quoted" | "declined" | "converted";
+export interface ServiceRequest {
+  id: string;
+  clientUserId: string;
+  clientName: string;
+  clientEmail?: string;
+  productId?: string;
+  title: string;
+  description: string;
+  budget?: number;
+  status: ServiceRequestStatus;
+  createdAt: string;
+}
+
+export type ClientReportPeriod = "weekly" | "monthly" | "custom";
+export interface ClientReportMetric { label: string; value: string }
+export interface ClientReport {
+  id: string;
+  clientName: string;
+  period: ClientReportPeriod;
+  title: string;
+  summary: string;
+  metrics?: ClientReportMetric[];
+  projectId?: string;
+  createdAt: string;
+  sentAt?: string;
 }
 
 export type EmailProvider = "resend" | "sendgrid" | "mailgun" | "smtp" | "none";
@@ -422,4 +454,6 @@ export interface CRMState {
   lists: Record<string, ListItem[]>;
   errorLogs: ErrorLog[];
   notifications: AppNotification[];
+  serviceRequests: ServiceRequest[];
+  clientReports: ClientReport[];
 }
