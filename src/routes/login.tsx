@@ -115,7 +115,7 @@ function LoginPage() {
         </div>
       </div>
 
-      {/* RIGHT — sign in form */}
+      {/* RIGHT — role picker + form */}
       <div className="relative flex w-full items-center justify-center px-6 py-12 lg:w-1/2">
         <div
           className="aurora-blob lg:hidden"
@@ -132,89 +132,149 @@ function LoginPage() {
             </div>
           </div>
 
-          <div className="mb-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary">
-              <span className="relative flex h-2 w-2">
-                <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-              </span>
-              Secure sign in
-            </div>
-            <h2 className="mt-4 text-4xl font-black tracking-tight">Welcome back.</h2>
-            <p className="mt-2 text-sm" style={{ color: "#666" }}>
-              Enter your credentials to continue to your workspace.
-            </p>
-          </div>
-
-          <form onSubmit={submit} className="space-y-4">
-            <div className="field">
-              <input
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder=" "
-                required
-              />
-              <label>Work email</label>
-            </div>
-
-            <div className="field">
-              <input
-                type={showPw ? "text" : "password"}
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder=" "
-                required
-              />
-              <label>Password</label>
-              <button
-                type="button"
-                onClick={() => setShowPw((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-muted-foreground hover:bg-muted"
-                aria-label={showPw ? "Hide password" : "Show password"}
-              >
-                {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-
-            {error && (
-              <div className="rounded-lg border border-primary/25 bg-accent px-3 py-2 text-xs font-semibold text-primary">
-                {error}
+          {role === null && (
+            <div key="picker" className="animate-fade-in">
+              <div className="mb-8">
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary">
+                  <Sparkles className="h-3 w-3" /> Choose how you sign in
+                </div>
+                <h2 className="mt-4 text-4xl font-black tracking-tight">Who are you?</h2>
+                <p className="mt-2 text-sm" style={{ color: "#666" }}>
+                  Pick an option below to continue to the right workspace.
+                </p>
               </div>
-            )}
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="group relative h-12 w-full overflow-hidden font-extrabold text-sm tracking-wide"
-            >
-              <span className="relative z-10 inline-flex items-center gap-2">
-                {loading ? "Signing in…" : "Sign in to workspace"}
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </span>
-            </Button>
+              <div className="grid gap-4">
+                <button
+                  type="button"
+                  onClick={() => navigate({ to: "/portal" })}
+                  className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-divider bg-white p-5 text-left transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_10px_30px_-12px_rgba(255,60,90,0.35)]"
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent text-primary transition-transform group-hover:scale-110">
+                    <Users className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-black tracking-tight">Client</div>
+                    <div className="text-[12px]" style={{ color: "#666" }}>
+                      Track your projects, approvals & deliverables.
+                    </div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-primary transition-transform group-hover:translate-x-1" />
+                </button>
 
-            <div className="flex items-center justify-between pt-1 text-[11px]" style={{ color: "#999" }}>
-              <span>Protected workspace · MetaEdge Creatives</span>
+                <button
+                  type="button"
+                  onClick={() => setRole("team")}
+                  className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-divider bg-white p-5 text-left transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_10px_30px_-12px_rgba(255,60,90,0.35)]"
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary text-white transition-transform group-hover:scale-110">
+                    <Briefcase className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-black tracking-tight">Team Member</div>
+                    <div className="text-[12px]" style={{ color: "#666" }}>
+                      Sign in to your MetaEdge internal workspace.
+                    </div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-primary transition-transform group-hover:translate-x-1" />
+                </button>
+              </div>
+
+              <div className="mt-8 text-center text-[11px]" style={{ color: "#999" }}>
+                Protected workspace · MetaEdge Creatives
+              </div>
+            </div>
+          )}
+
+          {role === "team" && (
+            <div key="form" className="animate-fade-in">
               <button
                 type="button"
-                onClick={() => setForgotOpen(true)}
-                className="font-semibold text-primary hover:underline"
+                onClick={() => { setRole(null); setError(null); }}
+                className="mb-6 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.15em] text-primary hover:underline"
               >
-                Forgot password?
+                <ArrowLeft className="h-3.5 w-3.5" /> Back
               </button>
+              <div className="mb-8">
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary">
+                  <span className="relative flex h-2 w-2">
+                    <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                  </span>
+                  Secure team sign in
+                </div>
+                <h2 className="mt-4 text-4xl font-black tracking-tight">Welcome back.</h2>
+                <p className="mt-2 text-sm" style={{ color: "#666" }}>
+                  Enter your credentials to continue to your workspace.
+                </p>
+              </div>
+
+              <form onSubmit={submit} className="space-y-4 animate-scale-in">
+                <div className="field">
+                  <input
+                    type="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder=" "
+                    required
+                  />
+                  <label>Work email</label>
+                </div>
+
+                <div className="field">
+                  <input
+                    type={showPw ? "text" : "password"}
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder=" "
+                    required
+                  />
+                  <label>Password</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowPw((s) => !s)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-muted-foreground hover:bg-muted"
+                    aria-label={showPw ? "Hide password" : "Show password"}
+                  >
+                    {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+
+                {error && (
+                  <div className="rounded-lg border border-primary/25 bg-accent px-3 py-2 text-xs font-semibold text-primary">
+                    {error}
+                  </div>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="group relative h-12 w-full overflow-hidden font-extrabold text-sm tracking-wide"
+                >
+                  <span className="relative z-10 inline-flex items-center gap-2">
+                    {loading ? "Signing in…" : "Sign in to workspace"}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </Button>
+
+                <div className="flex items-center justify-between pt-1 text-[11px]" style={{ color: "#999" }}>
+                  <span>Protected workspace · MetaEdge Creatives</span>
+                  <button
+                    type="button"
+                    onClick={() => setForgotOpen(true)}
+                    className="font-semibold text-primary hover:underline"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              </form>
             </div>
-            <div className="mt-4 rounded-lg border border-divider bg-accent/40 px-3 py-2 text-center text-[11px]" style={{ color: "#666" }}>
-              Not a team member?{" "}
-              <a href="/portal" className="font-bold text-primary hover:underline">
-                Go to the client portal →
-              </a>
-            </div>
-          </form>
+          )}
         </div>
       </div>
+
       <ForgotPasswordDialog open={forgotOpen} onClose={() => setForgotOpen(false)} />
     </div>
   );
