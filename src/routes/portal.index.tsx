@@ -55,14 +55,46 @@ function PortalDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-divider bg-gradient-to-br from-primary to-[#8A0F24] p-6 text-white md:p-8">
-        <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest">
-          <Sparkles className="h-3 w-3" /> Client dashboard
+      <div className="relative overflow-hidden rounded-2xl border border-divider bg-gradient-to-br from-primary to-[#8A0F24] p-6 text-white md:p-8">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.12]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        />
+        <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest">
+              <Sparkles className="h-3 w-3" /> Client dashboard
+            </div>
+            <h1 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">
+              Hi {client?.name?.split(" ")[0] || "there"}, welcome back 👋
+            </h1>
+            <p className="mt-2 max-w-lg text-sm text-white/80">
+              Here's a snapshot of your account with MetaEdge Creatives.
+            </p>
+          </div>
+          <Link
+            to="/portal/support"
+            className="group relative inline-flex shrink-0 items-center gap-3 self-start rounded-2xl bg-white px-6 py-4 text-primary shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)] transition hover:-translate-y-0.5 hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)]"
+          >
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white">
+              <Sparkles className="h-5 w-5" />
+            </span>
+            <span className="flex flex-col leading-tight">
+              <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary/70">
+                New
+              </span>
+              <span className="text-lg font-black tracking-tight text-neutral-900">
+                Start a request
+              </span>
+            </span>
+            <ArrowRight className="ml-2 h-5 w-5 text-primary transition group-hover:translate-x-1" />
+          </Link>
         </div>
-        <h1 className="mt-3 text-3xl font-black md:text-4xl">Hi {client?.name?.split(" ")[0] || "there"}, welcome back 👋</h1>
-        <p className="mt-2 max-w-lg text-sm text-white/80">
-          Here's a snapshot of your account with MetaEdge Creatives.
-        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
