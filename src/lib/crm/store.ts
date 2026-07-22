@@ -175,6 +175,7 @@ interface Actions {
   addClientUser: (c: Omit<ClientUser, "id" | "createdAt">) => ClientUser;
   updateClientUser: (id: string, patch: Partial<ClientUser>) => void;
   deleteClientUser: (id: string) => void;
+  resendClientInvite: (id: string) => { ok: boolean; error?: string; user?: ClientUser };
 
   clientSignup: (input: { name: string; email: string; password: string; companyName?: string; phone?: string }) => { ok: boolean; error?: string; user?: ClientUser };
   clientLogin: (email: string, password: string) => { ok: boolean; error?: string };
