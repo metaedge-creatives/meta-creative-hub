@@ -12,7 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Edit } from "lucide-react";
+import { Trash2, Edit, Send, Check } from "lucide-react";
+import { toast } from "sonner";
 
 const STATUSES: { id: ClientUserStatus; label: string; color: string }[] = [
   { id: "invited", label: "Invited", color: "#F59E0B" },
