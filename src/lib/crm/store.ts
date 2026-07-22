@@ -202,6 +202,8 @@ interface Actions {
 
   pushErrorLog: (message: string, level?: ErrorLog["level"]) => void;
   clearErrorLogs: () => void;
+  logExport: (entry: { entity: string; format: "csv" | "pdf" | "json"; filename: string; rowCount: number }) => void;
+  clearExportHistory: () => void;
   clearCache: () => void;
 
   addNotification: (n: { kind: NotificationKind; title: string; body?: string; link?: string }) => AppNotification;
