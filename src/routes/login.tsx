@@ -100,26 +100,27 @@ function LoginPage() {
             ].map((c) => (
               <div
                 key={c.k}
-                className="group relative overflow-hidden rounded-xl border border-white/25 p-3 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.35),inset_0_1px_0_0_rgba(255,255,255,0.35)] transition-transform hover:-translate-y-0.5"
+                className="group relative overflow-hidden rounded-xl border border-white/70 p-3 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.9)] transition-transform hover:-translate-y-0.5"
                 style={{
                   background:
-                    "linear-gradient(135deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.18) 100%)",
+                    "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.85) 55%, rgba(255,255,255,0.95) 100%)",
                   backdropFilter: "blur(18px) saturate(160%)",
                 }}
               >
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-xl opacity-70"
+                  className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-xl opacity-90"
                   style={{
                     background:
-                      "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 100%)",
+                      "linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 100%)",
                   }}
                 />
-                <c.icon className="relative mb-2 h-4 w-4 text-white drop-shadow" />
-                <div className="relative text-[11px] font-extrabold text-white">{c.k}</div>
-                <div className="relative text-[10px] text-white/80">{c.v}</div>
+                <c.icon className="relative mb-2 h-4 w-4 text-primary" />
+                <div className="relative text-[11px] font-extrabold text-neutral-900">{c.k}</div>
+                <div className="relative text-[10px] font-semibold text-neutral-600">{c.v}</div>
               </div>
             ))}
+
           </div>
 
         </div>
