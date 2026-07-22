@@ -338,6 +338,8 @@ export interface ClientUser {
   permissions?: Partial<ClientPortalPermissions>;
   status: ClientUserStatus;
   createdAt: string;
+  lastInvitedAt?: string;
+  inviteCount?: number;
 }
 
 export type ServiceRequestStatus = "new" | "reviewing" | "quoted" | "declined" | "converted";
