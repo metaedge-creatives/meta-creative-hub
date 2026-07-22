@@ -201,7 +201,7 @@ function LoginPage() {
               <div className="grid gap-4">
                 <button
                   type="button"
-                  onClick={() => navigate({ to: "/portal" })}
+                  onClick={goClient}
                   className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-divider bg-white p-5 text-left transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_10px_30px_-12px_rgba(255,60,90,0.35)]"
                 >
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent text-primary transition-transform group-hover:scale-110">
