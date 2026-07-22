@@ -6,7 +6,7 @@ import { createServerFn } from "@tanstack/react-start";
 const TABLE = "client_users_sync";
 
 export const cloudPushClientUser = createServerFn({ method: "POST" })
-  .inputValidator((input: { id: string; email: string; data: unknown }) => {
+  .validator((input: { id: string; email: string; data: unknown }) => {
     if (!input || typeof input.id !== "string" || typeof input.email !== "string") {
       throw new Error("Invalid input");
     }
@@ -29,7 +29,7 @@ export const cloudPushClientUser = createServerFn({ method: "POST" })
   });
 
 export const cloudDeleteClientUser = createServerFn({ method: "POST" })
-  .inputValidator((input: { id: string }) => {
+  .validator((input: { id: string }) => {
     if (!input || typeof input.id !== "string" || !input.id.trim()) throw new Error("Invalid id");
     if (input.id.length > 128) throw new Error("Id too long");
     return { id: input.id.trim() };
