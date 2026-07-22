@@ -781,8 +781,8 @@ export const useCRM = create<CRMState & Actions>()(
         get().addNotification({
           kind: "system",
           title: "New service request",
-          body: `${item.clientName} · ${item.title}`,
-          link: "/proposals",
+          body: `${item.clientName} · ${item.title}${item.budget ? ` · $${Number(item.budget).toLocaleString()}` : ""}`,
+          link: "/service-requests",
         });
         return item;
       },
