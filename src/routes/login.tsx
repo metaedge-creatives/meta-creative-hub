@@ -95,9 +95,9 @@ function LoginPage() {
 
 
   return (
-    <div className="relative flex min-h-screen overflow-hidden bg-background">
+    <div className={`relative flex min-h-screen overflow-hidden bg-background ${mirror ? "lg:flex-row-reverse" : ""}`}>
       {/* LEFT — brand stage */}
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden p-12 lg:flex side-dark">
+      <div className={`relative hidden w-1/2 flex-col justify-between overflow-hidden p-12 lg:flex side-dark ${brandAnim}`}>
         <div className="grid-mesh absolute inset-0 opacity-70" />
         <div
           className="aurora-blob"
