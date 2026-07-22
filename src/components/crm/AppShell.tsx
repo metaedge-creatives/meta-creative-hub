@@ -123,6 +123,7 @@ const NAV_SECTIONS: NavSection[] = [
   {
     label: "Organization",
     items: [
+      { to: "/modules", label: "Modules", icon: Shield, match: (p) => p.startsWith("/modules") },
       { to: "/automations", label: "Automations", icon: Zap, match: (p) => p.startsWith("/automations") },
       { to: "/tax", label: "Tax", icon: Percent, match: (p) => p.startsWith("/tax") },
       { to: "/tags", label: "Tags", icon: Tag, match: (p) => p.startsWith("/tags") },

@@ -1,11 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useCRM } from "@/lib/crm/store";
-import { useCurrentClientUser, formatCurrency, formatDate } from "@/lib/crm/hooks";
+import {
+  useCurrentClientUser,
+  formatCurrency,
+  formatDate,
+  usePaymentsModuleEnabled,
+  useStripeConnected,
+} from "@/lib/crm/hooks";
 import type { Invoice } from "@/lib/crm/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FileText, Search, Download, CreditCard } from "lucide-react";
+import { FileText, Search, Download, CreditCard, Info } from "lucide-react";
 
 export const Route = createFileRoute("/portal/invoices")({
   head: () => ({ meta: [{ title: "Invoices · Client Portal" }] }),
@@ -22,6 +28,8 @@ function invoiceTotal(i: Invoice) {
 function PortalInvoices() {
   const client = useCurrentClientUser();
   const invoices = useCRM((s) => s.invoices) ?? EMPTY;
+  const paymentsEnabled = usePaymentsModuleEnabled();
+  const stripeConnected = useStripeConnected();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<string>("all");
 
@@ -37,12 +45,32 @@ function PortalInvoices() {
   const filtered = mine.filter(
     (i) =>
       (status === "all" || i.status === status) &&
-      (q === "" || i.number.toLowerCase().includes(q.toLowerCase()) || i.clientName.toLowerCase().includes(q.toLowerCase())),
+      (q === "" ||
+        i.number.toLowerCase().includes(q.toLowerCase()) ||
+        i.clientName.toLowerCase().includes(q.toLowerCase())),
   );
+
+  const handlePay = (i: Invoice) => {
+    if (!paymentsEnabled) return;
+    if (!stripeConnected) {
+      alert("Online payments are enabled but Stripe is not yet connected. Please contact the team.");
+      return;
+    }
+    alert(`Redirecting to Stripe Checkout for invoice ${i.number}…\n(This will open the live Stripe session once Stripe is fully wired.)`);
+  };
 
   return (
     <div className="space-y-5">
-      <Header title="Invoices" subtitle="View and download your invoices." icon={FileText} />
+      <Header title="Invoices" subtitle="View, download, and pay your invoices." icon={FileText} />
+
+      {paymentsEnabled && !stripeConnected && (
+        <div className="flex items-start gap-3 rounded-xl border border-primary/25 bg-accent px-4 py-3 text-xs">
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+          <div>
+            Online payments are on, but the checkout is being finalized. You'll be able to pay by card here shortly.
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-3 md:flex-row md:items-center">
         <div className="relative flex-1">
@@ -93,8 +121,8 @@ function PortalInvoices() {
             </div>
             <div className="col-span-2 flex items-center justify-end gap-2 md:col-span-2">
               <div className="font-black">{formatCurrency(invoiceTotal(i))}</div>
-              {i.status !== "paid" && i.status !== "cancelled" && (
-                <Button size="sm" variant="outline" className="hidden md:inline-flex">
+              {paymentsEnabled && i.status !== "paid" && i.status !== "cancelled" && (
+                <Button size="sm" onClick={() => handlePay(i)} className="hidden md:inline-flex">
                   <CreditCard className="h-3.5 w-3.5" /> Pay
                 </Button>
               )}
