@@ -513,7 +513,7 @@ export const useCRM = create<CRMState & Actions>()(
           phone: input.phone,
           companyName: input.companyName,
           status: "active",
-          permissions: { dashboard: true, invoices: true, contracts: true, payments: true, spending: true, support: true, settings: true },
+          permissions: { dashboard: true, projects: true, invoices: true, contracts: true, payments: true, spending: true, proposals: true, reports: true, services: true, support: true, settings: true, consultation: true },
           createdAt: new Date().toISOString(),
         };
         set((s) => ({ clientUsers: [item, ...s.clientUsers], currentClientUserId: item.id }));
