@@ -39,6 +39,7 @@ import {
   Undo2,
   Zap,
 
+  History,
 } from "lucide-react";
 import { useCRM } from "@/lib/crm/store";
 import { useCurrentUser, initials } from "@/lib/crm/hooks";
