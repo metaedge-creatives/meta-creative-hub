@@ -288,8 +288,8 @@ export function AppShell() {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  // Public login route: render nothing but the Outlet.
-  if (path === "/login") {
+  // Public routes (login + client portal own their auth): render Outlet directly.
+  if (path === "/login" || path === "/portal" || path.startsWith("/portal/")) {
     return <Outlet />;
   }
 
