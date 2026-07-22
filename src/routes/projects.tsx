@@ -96,41 +96,23 @@ function ProjectsPage() {
     { key: "createdAt", label: "Created" },
   ];
 
-  const importProjects = async (file: File) => {
-    try {
-      const text = await file.text();
-      let rows: any[] = [];
-      if (file.name.endsWith(".json")) {
-        const parsed = JSON.parse(text);
-        rows = Array.isArray(parsed) ? parsed : [parsed];
-      } else {
-        const lines = text.split(/\r?\n/).filter(Boolean);
-        const headers = lines[0].split(",").map((h) => h.trim());
-        rows = lines.slice(1).map((line) => {
-          const cols = line.split(",");
-          const o: any = {};
-          headers.forEach((h, i) => (o[h] = cols[i]?.trim()));
-          return o;
-        });
-      }
-      let count = 0;
-      for (const r of rows) {
-        if (!r.name) continue;
-        addProject({
-          name: r.name,
-          brief: r.brief,
-          companyId: r.companyId,
-          contactId: r.contactId,
-          status: (STATUSES as readonly string[]).includes(r.status) ? r.status : "brief",
-          deadline: r.deadline,
-          tags: Array.isArray(r.tags) ? r.tags : [],
-        } as any);
-        count++;
-      }
-      alert(`Imported ${count} project${count === 1 ? "" : "s"}.`);
-    } catch (e) {
-      alert("Import failed: " + (e instanceof Error ? e.message : "invalid file"));
+  const importProjectRows = (rows: Record<string, string>[]) => {
+    let count = 0;
+    for (const r of rows) {
+      if (!r.name) continue;
+      const status = (STATUSES as readonly string[]).includes(r.status) ? (r.status as Status) : "brief";
+      addProject({
+        name: r.name,
+        brief: r.brief || undefined,
+        companyId: r.companyId || undefined,
+        contactId: r.contactId || undefined,
+        status,
+        deadline: r.deadline || undefined,
+        tags: r.tags ? r.tags.split(/[;|]/).map((t) => t.trim()).filter(Boolean) : [],
+      } as any);
+      count++;
     }
+    return count;
   };
 
   if (!can) return <NoAccess module="Projects" />;
