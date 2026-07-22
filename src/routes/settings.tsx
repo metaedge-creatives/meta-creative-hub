@@ -419,6 +419,11 @@ const TREE: Section[] = [
           { key: "sendReminders", label: "Send task reminders", type: "toggle", default: true },
           { key: "runAutomations", label: "Run automations", type: "toggle", default: true },
         ]}},
+        { slug: "security", label: "Security", config: { kind: "form", section: "main.security", fields: [
+          { key: "emailOtp", label: "Require email verification (6-digit code) for client signup", type: "toggle", default: false },
+          { key: "passwordMinLen", label: "Minimum password length", type: "number", default: 6 },
+          { key: "sessionTimeoutMin", label: "Session timeout (minutes, 0 = never)", type: "number", default: 0 },
+        ]}},
         { slug: "clear-cache", label: "Clear Cache", config: { kind: "component", render: () => <ClearCacheSection /> }},
         { slug: "error-logs", label: "Error Logs", config: { kind: "component", render: () => <ErrorLogsSection /> }},
       ]},
