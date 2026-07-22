@@ -25,10 +25,22 @@ function PortalServices() {
   const [form, setForm] = useState({ title: "", description: "", budget: "" });
   const [sent, setSent] = useState<string | null>(null);
 
+  const catalog = useMemo(() => {
+    if (products.length > 0) return products;
+    // Fallback catalog so the page is never empty for the client.
+    return DEFAULT_SERVICES.map((s) => ({
+      id: `default-${s.name.toLowerCase().replace(/\s+/g, "-")}`,
+      name: s.name,
+      description: s.description,
+      meta: { category: s.category, price: s.price, unit: s.unit },
+    })) as any[];
+  }, [products]);
+
   const services = useMemo(
-    () => products.filter((p) => p.name.toLowerCase().includes(q.toLowerCase())),
-    [products, q],
+    () => catalog.filter((p: any) => p.name.toLowerCase().includes(q.toLowerCase())),
+    [catalog, q],
   );
+
 
   const mine = useMemo(() => {
     if (!client) return [];
