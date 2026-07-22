@@ -129,6 +129,7 @@ const NAV_SECTIONS: NavSection[] = [
       { to: "/tax", label: "Tax", icon: Percent, match: (p) => p.startsWith("/tax") },
       { to: "/tags", label: "Tags", icon: Tag, match: (p) => p.startsWith("/tags") },
       
+      { to: "/export-history", label: "Export History", icon: History, match: (p) => p.startsWith("/export-history") },
       { to: "/knowledgebase", label: "Knowledgebase", icon: BookOpen, match: (p) => p.startsWith("/knowledgebase") },
     ],
   },
