@@ -37,6 +37,12 @@ import type {
 } from "./types";
 import type { ListItem, ErrorLog } from "./types";
 import type { AppNotification, NotificationKind } from "./types";
+import {
+  pushClientUser,
+  deleteClientUserRemote,
+  fetchAllClientUsers,
+  mergeClientUsers,
+} from "./cloudSync";
 
 const uid = () =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
