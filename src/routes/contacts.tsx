@@ -89,14 +89,16 @@ function ContactsPage() {
     };
   }, [companies, contacts]);
 
-  const exportClients = () => {
-    const blob = new Blob([JSON.stringify(companies, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `clients-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-  };
+  const CLIENT_COLS = [
+    { key: "name", label: "Name" },
+    { key: "email", label: "Email" },
+    { key: "firstName", label: "First Name" },
+    { key: "lastName", label: "Last Name" },
+    { key: "category", label: "Category" },
+    { key: "industry", label: "Industry" },
+    { key: "website", label: "Website" },
+    { key: "createdAt", label: "Created" },
+  ];
 
   const importClients = async (file: File) => {
     try {
