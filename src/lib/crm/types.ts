@@ -476,6 +476,7 @@ export interface CRMState {
   currentUserId: string | null;
   currentClientUserId: string | null;
   clientResetCodes: PasswordResetCode[];
+  pendingSignups: PendingSignup[];
   moduleSettings: Record<string, Record<string, any>>;
   lists: Record<string, ListItem[]>;
   errorLogs: ErrorLog[];
