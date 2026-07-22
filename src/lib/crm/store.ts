@@ -214,6 +214,7 @@ interface Actions {
 
   clientSignup: (input: { name: string; email: string; password: string; companyName?: string; phone?: string }) => { ok: boolean; error?: string; user?: ClientUser };
   clientLogin: (email: string, password: string) => { ok: boolean; error?: string };
+  hydrateClientUsersFromCloud: () => Promise<void>;
   clientLogout: () => void;
   setCurrentClientUser: (id: string | null) => void;
   updateCurrentClientUser: (patch: Partial<ClientUser>) => void;
