@@ -324,6 +324,17 @@ function LoginPage() {
                   </button>
                 </div>
               </form>
+
+              <div className="mt-8 text-center text-[11px]" style={{ color: "#999" }}>
+                Not a team member?{" "}
+                <button
+                  type="button"
+                  onClick={goClient}
+                  className="font-bold text-primary hover:underline"
+                >
+                  Client sign in →
+                </button>
+              </div>
             </div>
           )}
         </div>
