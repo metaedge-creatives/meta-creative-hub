@@ -98,6 +98,7 @@ const seed: CRMState = {
   notifications: [],
   serviceRequests: [],
   clientReports: [],
+  exportHistory: [],
 };
 
 interface Actions {
