@@ -189,12 +189,6 @@ function PortalAuthScreen() {
     setTimeout(() => navigate({ to: "/login" }), 400);
   };
 
-  const focusForm = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const el = document.querySelector<HTMLInputElement>('input[type="email"], input[autocomplete="email"]');
-    el?.scrollIntoView({ behavior: "smooth", block: "center" });
-    setTimeout(() => el?.focus(), 350);
-  };
 
   // Cross-swap: brand (LEFT) exits toward RIGHT; form (RIGHT) exits toward LEFT.
   // On enter from /login, brand slides IN from RIGHT, form slides IN from LEFT.
