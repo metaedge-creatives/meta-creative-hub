@@ -26,6 +26,7 @@ import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as PortalRouteImport } from './routes/portal'
 import { Route as PaymentsRouteImport } from './routes/payments'
+import { Route as ModulesRouteImport } from './routes/modules'
 import { Route as MilestonesRouteImport } from './routes/milestones'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LeadsRouteImport } from './routes/leads'
@@ -47,6 +48,10 @@ import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
 import { Route as PortalSupportRouteImport } from './routes/portal.support'
 import { Route as PortalSpendingRouteImport } from './routes/portal.spending'
 import { Route as PortalSettingsRouteImport } from './routes/portal.settings'
+import { Route as PortalServicesRouteImport } from './routes/portal.services'
+import { Route as PortalReportsRouteImport } from './routes/portal.reports'
+import { Route as PortalProposalsRouteImport } from './routes/portal.proposals'
+import { Route as PortalProjectsRouteImport } from './routes/portal.projects'
 import { Route as PortalPaymentsRouteImport } from './routes/portal.payments'
 import { Route as PortalInvoicesRouteImport } from './routes/portal.invoices'
 import { Route as PortalContractsRouteImport } from './routes/portal.contracts'
@@ -139,6 +144,11 @@ const PortalRoute = PortalRouteImport.update({
 const PaymentsRoute = PaymentsRouteImport.update({
   id: '/payments',
   path: '/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ModulesRoute = ModulesRouteImport.update({
+  id: '/modules',
+  path: '/modules',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MilestonesRoute = MilestonesRouteImport.update({
@@ -246,6 +256,26 @@ const PortalSettingsRoute = PortalSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => PortalRoute,
 } as any)
+const PortalServicesRoute = PortalServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalReportsRoute = PortalReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalProposalsRoute = PortalProposalsRouteImport.update({
+  id: '/proposals',
+  path: '/proposals',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalProjectsRoute = PortalProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => PortalRoute,
+} as any)
 const PortalPaymentsRoute = PortalPaymentsRouteImport.update({
   id: '/payments',
   path: '/payments',
@@ -302,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/leads': typeof LeadsRoute
   '/login': typeof LoginRoute
   '/milestones': typeof MilestonesRoute
+  '/modules': typeof ModulesRoute
   '/payments': typeof PaymentsRoute
   '/portal': typeof PortalRouteWithChildren
   '/products': typeof ProductsRoute
@@ -327,6 +358,10 @@ export interface FileRoutesByFullPath {
   '/portal/contracts': typeof PortalContractsRoute
   '/portal/invoices': typeof PortalInvoicesRoute
   '/portal/payments': typeof PortalPaymentsRoute
+  '/portal/projects': typeof PortalProjectsRoute
+  '/portal/proposals': typeof PortalProposalsRoute
+  '/portal/reports': typeof PortalReportsRoute
+  '/portal/services': typeof PortalServicesRoute
   '/portal/settings': typeof PortalSettingsRoute
   '/portal/spending': typeof PortalSpendingRoute
   '/portal/support': typeof PortalSupportRoute
@@ -350,6 +385,7 @@ export interface FileRoutesByTo {
   '/leads': typeof LeadsRoute
   '/login': typeof LoginRoute
   '/milestones': typeof MilestonesRoute
+  '/modules': typeof ModulesRoute
   '/payments': typeof PaymentsRoute
   '/products': typeof ProductsRoute
   '/projects': typeof ProjectsRouteWithChildren
@@ -374,6 +410,10 @@ export interface FileRoutesByTo {
   '/portal/contracts': typeof PortalContractsRoute
   '/portal/invoices': typeof PortalInvoicesRoute
   '/portal/payments': typeof PortalPaymentsRoute
+  '/portal/projects': typeof PortalProjectsRoute
+  '/portal/proposals': typeof PortalProposalsRoute
+  '/portal/reports': typeof PortalReportsRoute
+  '/portal/services': typeof PortalServicesRoute
   '/portal/settings': typeof PortalSettingsRoute
   '/portal/spending': typeof PortalSpendingRoute
   '/portal/support': typeof PortalSupportRoute
@@ -398,6 +438,7 @@ export interface FileRoutesById {
   '/leads': typeof LeadsRoute
   '/login': typeof LoginRoute
   '/milestones': typeof MilestonesRoute
+  '/modules': typeof ModulesRoute
   '/payments': typeof PaymentsRoute
   '/portal': typeof PortalRouteWithChildren
   '/products': typeof ProductsRoute
@@ -423,6 +464,10 @@ export interface FileRoutesById {
   '/portal/contracts': typeof PortalContractsRoute
   '/portal/invoices': typeof PortalInvoicesRoute
   '/portal/payments': typeof PortalPaymentsRoute
+  '/portal/projects': typeof PortalProjectsRoute
+  '/portal/proposals': typeof PortalProposalsRoute
+  '/portal/reports': typeof PortalReportsRoute
+  '/portal/services': typeof PortalServicesRoute
   '/portal/settings': typeof PortalSettingsRoute
   '/portal/spending': typeof PortalSpendingRoute
   '/portal/support': typeof PortalSupportRoute
@@ -448,6 +493,7 @@ export interface FileRouteTypes {
     | '/leads'
     | '/login'
     | '/milestones'
+    | '/modules'
     | '/payments'
     | '/portal'
     | '/products'
@@ -473,6 +519,10 @@ export interface FileRouteTypes {
     | '/portal/contracts'
     | '/portal/invoices'
     | '/portal/payments'
+    | '/portal/projects'
+    | '/portal/proposals'
+    | '/portal/reports'
+    | '/portal/services'
     | '/portal/settings'
     | '/portal/spending'
     | '/portal/support'
@@ -496,6 +546,7 @@ export interface FileRouteTypes {
     | '/leads'
     | '/login'
     | '/milestones'
+    | '/modules'
     | '/payments'
     | '/products'
     | '/projects'
@@ -520,6 +571,10 @@ export interface FileRouteTypes {
     | '/portal/contracts'
     | '/portal/invoices'
     | '/portal/payments'
+    | '/portal/projects'
+    | '/portal/proposals'
+    | '/portal/reports'
+    | '/portal/services'
     | '/portal/settings'
     | '/portal/spending'
     | '/portal/support'
@@ -543,6 +598,7 @@ export interface FileRouteTypes {
     | '/leads'
     | '/login'
     | '/milestones'
+    | '/modules'
     | '/payments'
     | '/portal'
     | '/products'
@@ -568,6 +624,10 @@ export interface FileRouteTypes {
     | '/portal/contracts'
     | '/portal/invoices'
     | '/portal/payments'
+    | '/portal/projects'
+    | '/portal/proposals'
+    | '/portal/reports'
+    | '/portal/services'
     | '/portal/settings'
     | '/portal/spending'
     | '/portal/support'
@@ -592,6 +652,7 @@ export interface RootRouteChildren {
   LeadsRoute: typeof LeadsRoute
   LoginRoute: typeof LoginRoute
   MilestonesRoute: typeof MilestonesRoute
+  ModulesRoute: typeof ModulesRoute
   PaymentsRoute: typeof PaymentsRoute
   PortalRoute: typeof PortalRouteWithChildren
   ProductsRoute: typeof ProductsRoute
@@ -733,6 +794,13 @@ declare module '@tanstack/react-router' {
       path: '/payments'
       fullPath: '/payments'
       preLoaderRoute: typeof PaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/modules': {
+      id: '/modules'
+      path: '/modules'
+      fullPath: '/modules'
+      preLoaderRoute: typeof ModulesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/milestones': {
@@ -882,6 +950,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalSettingsRouteImport
       parentRoute: typeof PortalRoute
     }
+    '/portal/services': {
+      id: '/portal/services'
+      path: '/services'
+      fullPath: '/portal/services'
+      preLoaderRoute: typeof PortalServicesRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/portal/reports': {
+      id: '/portal/reports'
+      path: '/reports'
+      fullPath: '/portal/reports'
+      preLoaderRoute: typeof PortalReportsRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/portal/proposals': {
+      id: '/portal/proposals'
+      path: '/proposals'
+      fullPath: '/portal/proposals'
+      preLoaderRoute: typeof PortalProposalsRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/portal/projects': {
+      id: '/portal/projects'
+      path: '/projects'
+      fullPath: '/portal/projects'
+      preLoaderRoute: typeof PortalProjectsRouteImport
+      parentRoute: typeof PortalRoute
+    }
     '/portal/payments': {
       id: '/portal/payments'
       path: '/payments'
@@ -968,6 +1064,10 @@ interface PortalRouteChildren {
   PortalContractsRoute: typeof PortalContractsRoute
   PortalInvoicesRoute: typeof PortalInvoicesRoute
   PortalPaymentsRoute: typeof PortalPaymentsRoute
+  PortalProjectsRoute: typeof PortalProjectsRoute
+  PortalProposalsRoute: typeof PortalProposalsRoute
+  PortalReportsRoute: typeof PortalReportsRoute
+  PortalServicesRoute: typeof PortalServicesRoute
   PortalSettingsRoute: typeof PortalSettingsRoute
   PortalSpendingRoute: typeof PortalSpendingRoute
   PortalSupportRoute: typeof PortalSupportRoute
@@ -979,6 +1079,10 @@ const PortalRouteChildren: PortalRouteChildren = {
   PortalContractsRoute: PortalContractsRoute,
   PortalInvoicesRoute: PortalInvoicesRoute,
   PortalPaymentsRoute: PortalPaymentsRoute,
+  PortalProjectsRoute: PortalProjectsRoute,
+  PortalProposalsRoute: PortalProposalsRoute,
+  PortalReportsRoute: PortalReportsRoute,
+  PortalServicesRoute: PortalServicesRoute,
   PortalSettingsRoute: PortalSettingsRoute,
   PortalSpendingRoute: PortalSpendingRoute,
   PortalSupportRoute: PortalSupportRoute,
@@ -1017,6 +1121,7 @@ const rootRouteChildren: RootRouteChildren = {
   LeadsRoute: LeadsRoute,
   LoginRoute: LoginRoute,
   MilestonesRoute: MilestonesRoute,
+  ModulesRoute: ModulesRoute,
   PaymentsRoute: PaymentsRoute,
   PortalRoute: PortalRouteWithChildren,
   ProductsRoute: ProductsRoute,
