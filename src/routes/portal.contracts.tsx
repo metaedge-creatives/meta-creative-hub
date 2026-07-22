@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useCRM } from "@/lib/crm/store";
-import { useCurrentClientUser, formatCurrency, formatDate } from "@/lib/crm/hooks";
+import { useCurrentClientUser, formatCurrency, formatDate, isOwnedByClient } from "@/lib/crm/hooks";
 import type { Contract } from "@/lib/crm/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
