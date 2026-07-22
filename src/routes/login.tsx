@@ -37,10 +37,31 @@ function LoginPage() {
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
+  const [phase, setPhase] = useState<"idle" | "enter" | "exit-to-portal">("idle");
+  const [mirror, setMirror] = useState(false); // when true: form on LEFT, brand on RIGHT
 
   useEffect(() => {
     if (user) navigate({ to: "/" });
   }, [user, navigate]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem("mec.swap") === "to-login") {
+      sessionStorage.removeItem("mec.swap");
+      setRole("team");
+      setMirror(true);
+      setPhase("enter");
+      const t = setTimeout(() => setPhase("idle"), 560);
+      return () => clearTimeout(t);
+    }
+  }, []);
+
+  const goClient = () => {
+    if (phase === "exit-to-portal") return;
+    sessionStorage.setItem("mec.swap", "to-portal");
+    setPhase("exit-to-portal");
+    setTimeout(() => navigate({ to: "/portal" }), 400);
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +74,24 @@ function LoginPage() {
       else setError(result.error ?? "Sign in failed");
     }, 220);
   };
+
+  // Animation classes:
+  // Brand panel starts on LEFT (default) or RIGHT (mirror).
+  //  - exit-to-portal: brand always slides OUT toward its OWN side (left→left, right→right)
+  //  - enter (arrived from portal, mirror=true, brand on RIGHT): comes IN from RIGHT
+  const brandAnim =
+    phase === "exit-to-portal"
+      ? mirror ? "swap-out-right" : "swap-out-left"
+      : phase === "enter"
+        ? "swap-in-right"
+        : "";
+  const formAnim =
+    phase === "exit-to-portal"
+      ? mirror ? "swap-out-left" : "swap-out-right"
+      : phase === "enter"
+        ? "swap-in-left"
+        : "";
+
 
 
   return (
