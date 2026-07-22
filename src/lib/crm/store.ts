@@ -99,6 +99,7 @@ const seed: CRMState = {
   serviceRequests: [],
   clientReports: [],
   exportHistory: [],
+  consultationBookings: [],
 };
 
 interface Actions {
