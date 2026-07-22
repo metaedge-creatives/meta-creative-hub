@@ -22,11 +22,7 @@ function PortalContracts() {
 
   const mine = useMemo(() => {
     if (!client) return [];
-    const cn = client.name.toLowerCase();
-    const cc = (client.companyName || "").toLowerCase();
-    return contracts.filter(
-      (c) => c.clientName.toLowerCase() === cn || (cc && c.clientName.toLowerCase() === cc),
-    );
+    return contracts.filter((c) => isOwnedByClient(c, client));
   }, [client, contracts]);
 
   const filtered = mine.filter((c) => q === "" || c.title.toLowerCase().includes(q.toLowerCase()));
