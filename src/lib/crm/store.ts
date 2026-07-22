@@ -126,6 +126,7 @@ const seed: CRMState = {
   currentUserId: null,
   currentClientUserId: null,
   clientResetCodes: [],
+  pendingSignups: [],
   moduleSettings: {},
   lists: {},
   errorLogs: [],
