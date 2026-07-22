@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  LayoutDashboard, FileText, ScrollText, CreditCard, PieChart, LifeBuoy, Settings,
+  LayoutDashboard, FileText, ScrollText, CreditCard, PieChart, LifeBuoy, Settings, CalendarClock,
   LogOut, Menu, X, ArrowRight, Sparkles, ShieldCheck, Eye, EyeOff, KeyRound, Mail, CheckCircle2,
 } from "lucide-react";
 
@@ -27,6 +27,7 @@ const NAV = [
   { to: "/portal/contracts", label: "Contracts", icon: ScrollText, key: "contracts" as const },
   { to: "/portal/payments", label: "Payments", icon: CreditCard, key: "payments" as const },
   { to: "/portal/spending", label: "Spending", icon: PieChart, key: "spending" as const },
+  { to: "/portal/consultation", label: "Book a call", icon: CalendarClock, key: "consultation" as const },
   { to: "/portal/support", label: "Support", icon: LifeBuoy, key: "support" as const },
   { to: "/portal/settings", label: "Settings", icon: Settings, key: "settings" as const },
 ];
