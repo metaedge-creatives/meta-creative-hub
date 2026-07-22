@@ -427,7 +427,8 @@ export const useCRM = create<CRMState & Actions>()(
       deleteNote: (id) => set((s) => ({ notes: s.notes.filter((n) => n.id !== id) })),
 
       addInvoice: (i) => {
-        const item: Invoice = { ...i, id: uid(), createdAt: new Date().toISOString() };
+        const clientUserId = i.clientUserId ?? resolveClientUserId(get().clientUsers, { email: i.clientEmail, name: i.clientName });
+        const item: Invoice = { ...i, clientUserId, id: uid(), createdAt: new Date().toISOString() };
         set((s) => ({ invoices: [item, ...s.invoices] }));
         get().addNotification({ kind: "invoice", title: "Invoice created", body: item.number ? `#${item.number} · ${item.clientName}` : item.clientName, link: "/invoices" });
         return item;
