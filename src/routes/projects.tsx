@@ -241,13 +241,14 @@ function ProjectsPage() {
             </label>
             <span className="text-xs" style={{ color: "#666" }}>{selected.size} selected</span>
             <div className="ml-auto flex flex-wrap items-center gap-2">
-              <Button
-                variant="outline" size="sm" disabled={selected.size === 0}
-                onClick={() => exportProjects(projects.filter((p) => selected.has(p.id)))}
-                className="font-bold"
-              >
-                <Download className="h-3.5 w-3.5" /> Export selected
-              </Button>
+              <ExportMenu
+                label="Export selected"
+                filenameBase="projects-selected"
+                title="MetaEdge Creatives — Selected Projects"
+                rows={projects.filter((p) => selected.has(p.id))}
+                columns={PROJECT_COLS}
+                disabled={selected.size === 0}
+              />
               <Select
                 value={bulkStatus}
                 onValueChange={(v) => {
