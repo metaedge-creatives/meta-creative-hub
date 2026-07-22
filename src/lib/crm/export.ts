@@ -42,7 +42,7 @@ function toCSV(rows: any[], columns?: Col[]): string {
 function toPDF(
   title: string,
   rows: any[],
-  columns?: { key: string; label?: string }[],
+  columns?: Col[],
 ): Blob {
   const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth();
