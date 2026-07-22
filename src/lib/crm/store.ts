@@ -32,6 +32,8 @@ import type {
   ServiceRequest,
   ServiceRequestStatus,
   ClientReport,
+  ConsultationBooking,
+  ConsultationStatus,
 } from "./types";
 import type { ListItem, ErrorLog } from "./types";
 import type { AppNotification, NotificationKind } from "./types";
