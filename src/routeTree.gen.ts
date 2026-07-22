@@ -9,38 +9,811 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UserRolesRouteImport } from './routes/user-roles'
+import { Route as TimeSheetsRouteImport } from './routes/time-sheets'
+import { Route as TicketsRouteImport } from './routes/tickets'
+import { Route as TeamRouteImport } from './routes/team'
+import { Route as TaxRouteImport } from './routes/tax'
+import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as TagsRouteImport } from './routes/tags'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as SubscriptionsRouteImport } from './routes/subscriptions'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as RefundsRouteImport } from './routes/refunds'
+import { Route as ProposalsRouteImport } from './routes/proposals'
+import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as ProductsRouteImport } from './routes/products'
+import { Route as PortalRouteImport } from './routes/portal'
+import { Route as PaymentsRouteImport } from './routes/payments'
+import { Route as MilestonesRouteImport } from './routes/milestones'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LeadsRouteImport } from './routes/leads'
+import { Route as KnowledgebaseRouteImport } from './routes/knowledgebase'
+import { Route as InvoicesRouteImport } from './routes/invoices'
+import { Route as FilesRouteImport } from './routes/files'
+import { Route as ExpensesRouteImport } from './routes/expenses'
+import { Route as EstimatesRouteImport } from './routes/estimates'
+import { Route as EmailMarketingRouteImport } from './routes/email-marketing'
+import { Route as DealsRouteImport } from './routes/deals'
+import { Route as ContractsRouteImport } from './routes/contracts'
+import { Route as ContactsRouteImport } from './routes/contacts'
+import { Route as AutomationsRouteImport } from './routes/automations'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PortalIndexRouteImport } from './routes/portal.index'
+import { Route as SalesInvoicesRouteImport } from './routes/sales.invoices'
+import { Route as ProjectsNewRouteImport } from './routes/projects.new'
+import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
+import { Route as PortalSupportRouteImport } from './routes/portal.support'
+import { Route as PortalSpendingRouteImport } from './routes/portal.spending'
+import { Route as PortalSettingsRouteImport } from './routes/portal.settings'
+import { Route as PortalPaymentsRouteImport } from './routes/portal.payments'
+import { Route as PortalInvoicesRouteImport } from './routes/portal.invoices'
+import { Route as PortalContractsRouteImport } from './routes/portal.contracts'
+import { Route as DealsIdRouteImport } from './routes/deals.$id'
+import { Route as CustomersClientUsersRouteImport } from './routes/customers.client-users'
+import { Route as ContactsIdRouteImport } from './routes/contacts.$id'
+import { Route as CompaniesIdRouteImport } from './routes/companies.$id'
 
+const UserRolesRoute = UserRolesRouteImport.update({
+  id: '/user-roles',
+  path: '/user-roles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TimeSheetsRoute = TimeSheetsRouteImport.update({
+  id: '/time-sheets',
+  path: '/time-sheets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TicketsRoute = TicketsRouteImport.update({
+  id: '/tickets',
+  path: '/tickets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamRoute = TeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TaxRoute = TaxRouteImport.update({
+  id: '/tax',
+  path: '/tax',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TasksRoute = TasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagsRoute = TagsRouteImport.update({
+  id: '/tags',
+  path: '/tags',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscriptionsRoute = SubscriptionsRouteImport.update({
+  id: '/subscriptions',
+  path: '/subscriptions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundsRoute = RefundsRouteImport.update({
+  id: '/refunds',
+  path: '/refunds',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProposalsRoute = ProposalsRouteImport.update({
+  id: '/proposals',
+  path: '/proposals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsRoute = ProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalRoute = PortalRouteImport.update({
+  id: '/portal',
+  path: '/portal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentsRoute = PaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MilestonesRoute = MilestonesRouteImport.update({
+  id: '/milestones',
+  path: '/milestones',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeadsRoute = LeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KnowledgebaseRoute = KnowledgebaseRouteImport.update({
+  id: '/knowledgebase',
+  path: '/knowledgebase',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvoicesRoute = InvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FilesRoute = FilesRouteImport.update({
+  id: '/files',
+  path: '/files',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpensesRoute = ExpensesRouteImport.update({
+  id: '/expenses',
+  path: '/expenses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstimatesRoute = EstimatesRouteImport.update({
+  id: '/estimates',
+  path: '/estimates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailMarketingRoute = EmailMarketingRouteImport.update({
+  id: '/email-marketing',
+  path: '/email-marketing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealsRoute = DealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContractsRoute = ContractsRouteImport.update({
+  id: '/contracts',
+  path: '/contracts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactsRoute = ContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AutomationsRoute = AutomationsRouteImport.update({
+  id: '/automations',
+  path: '/automations',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortalIndexRoute = PortalIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PortalRoute,
+} as any)
+const SalesInvoicesRoute = SalesInvoicesRouteImport.update({
+  id: '/sales/invoices',
+  path: '/sales/invoices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsNewRoute = ProjectsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => ProjectsRoute,
+} as any)
+const ProjectsIdRoute = ProjectsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ProjectsRoute,
+} as any)
+const PortalSupportRoute = PortalSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalSpendingRoute = PortalSpendingRouteImport.update({
+  id: '/spending',
+  path: '/spending',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalSettingsRoute = PortalSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalPaymentsRoute = PortalPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalInvoicesRoute = PortalInvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalContractsRoute = PortalContractsRouteImport.update({
+  id: '/contracts',
+  path: '/contracts',
+  getParentRoute: () => PortalRoute,
+} as any)
+const DealsIdRoute = DealsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DealsRoute,
+} as any)
+const CustomersClientUsersRoute = CustomersClientUsersRouteImport.update({
+  id: '/customers/client-users',
+  path: '/customers/client-users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactsIdRoute = ContactsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ContactsRoute,
+} as any)
+const CompaniesIdRoute = CompaniesIdRouteImport.update({
+  id: '/companies/$id',
+  path: '/companies/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/automations': typeof AutomationsRoute
+  '/contacts': typeof ContactsRouteWithChildren
+  '/contracts': typeof ContractsRoute
+  '/deals': typeof DealsRouteWithChildren
+  '/email-marketing': typeof EmailMarketingRoute
+  '/estimates': typeof EstimatesRoute
+  '/expenses': typeof ExpensesRoute
+  '/files': typeof FilesRoute
+  '/invoices': typeof InvoicesRoute
+  '/knowledgebase': typeof KnowledgebaseRoute
+  '/leads': typeof LeadsRoute
+  '/login': typeof LoginRoute
+  '/milestones': typeof MilestonesRoute
+  '/payments': typeof PaymentsRoute
+  '/portal': typeof PortalRouteWithChildren
+  '/products': typeof ProductsRoute
+  '/projects': typeof ProjectsRouteWithChildren
+  '/proposals': typeof ProposalsRoute
+  '/refunds': typeof RefundsRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
+  '/subscriptions': typeof SubscriptionsRoute
+  '/support': typeof SupportRoute
+  '/tags': typeof TagsRoute
+  '/tasks': typeof TasksRoute
+  '/tax': typeof TaxRoute
+  '/team': typeof TeamRoute
+  '/tickets': typeof TicketsRoute
+  '/time-sheets': typeof TimeSheetsRoute
+  '/user-roles': typeof UserRolesRoute
+  '/companies/$id': typeof CompaniesIdRoute
+  '/contacts/$id': typeof ContactsIdRoute
+  '/customers/client-users': typeof CustomersClientUsersRoute
+  '/deals/$id': typeof DealsIdRoute
+  '/portal/contracts': typeof PortalContractsRoute
+  '/portal/invoices': typeof PortalInvoicesRoute
+  '/portal/payments': typeof PortalPaymentsRoute
+  '/portal/settings': typeof PortalSettingsRoute
+  '/portal/spending': typeof PortalSpendingRoute
+  '/portal/support': typeof PortalSupportRoute
+  '/projects/$id': typeof ProjectsIdRoute
+  '/projects/new': typeof ProjectsNewRoute
+  '/sales/invoices': typeof SalesInvoicesRoute
+  '/portal/': typeof PortalIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/automations': typeof AutomationsRoute
+  '/contacts': typeof ContactsRouteWithChildren
+  '/contracts': typeof ContractsRoute
+  '/deals': typeof DealsRouteWithChildren
+  '/email-marketing': typeof EmailMarketingRoute
+  '/estimates': typeof EstimatesRoute
+  '/expenses': typeof ExpensesRoute
+  '/files': typeof FilesRoute
+  '/invoices': typeof InvoicesRoute
+  '/knowledgebase': typeof KnowledgebaseRoute
+  '/leads': typeof LeadsRoute
+  '/login': typeof LoginRoute
+  '/milestones': typeof MilestonesRoute
+  '/payments': typeof PaymentsRoute
+  '/products': typeof ProductsRoute
+  '/projects': typeof ProjectsRouteWithChildren
+  '/proposals': typeof ProposalsRoute
+  '/refunds': typeof RefundsRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
+  '/subscriptions': typeof SubscriptionsRoute
+  '/support': typeof SupportRoute
+  '/tags': typeof TagsRoute
+  '/tasks': typeof TasksRoute
+  '/tax': typeof TaxRoute
+  '/team': typeof TeamRoute
+  '/tickets': typeof TicketsRoute
+  '/time-sheets': typeof TimeSheetsRoute
+  '/user-roles': typeof UserRolesRoute
+  '/companies/$id': typeof CompaniesIdRoute
+  '/contacts/$id': typeof ContactsIdRoute
+  '/customers/client-users': typeof CustomersClientUsersRoute
+  '/deals/$id': typeof DealsIdRoute
+  '/portal/contracts': typeof PortalContractsRoute
+  '/portal/invoices': typeof PortalInvoicesRoute
+  '/portal/payments': typeof PortalPaymentsRoute
+  '/portal/settings': typeof PortalSettingsRoute
+  '/portal/spending': typeof PortalSpendingRoute
+  '/portal/support': typeof PortalSupportRoute
+  '/projects/$id': typeof ProjectsIdRoute
+  '/projects/new': typeof ProjectsNewRoute
+  '/sales/invoices': typeof SalesInvoicesRoute
+  '/portal': typeof PortalIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/automations': typeof AutomationsRoute
+  '/contacts': typeof ContactsRouteWithChildren
+  '/contracts': typeof ContractsRoute
+  '/deals': typeof DealsRouteWithChildren
+  '/email-marketing': typeof EmailMarketingRoute
+  '/estimates': typeof EstimatesRoute
+  '/expenses': typeof ExpensesRoute
+  '/files': typeof FilesRoute
+  '/invoices': typeof InvoicesRoute
+  '/knowledgebase': typeof KnowledgebaseRoute
+  '/leads': typeof LeadsRoute
+  '/login': typeof LoginRoute
+  '/milestones': typeof MilestonesRoute
+  '/payments': typeof PaymentsRoute
+  '/portal': typeof PortalRouteWithChildren
+  '/products': typeof ProductsRoute
+  '/projects': typeof ProjectsRouteWithChildren
+  '/proposals': typeof ProposalsRoute
+  '/refunds': typeof RefundsRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
+  '/subscriptions': typeof SubscriptionsRoute
+  '/support': typeof SupportRoute
+  '/tags': typeof TagsRoute
+  '/tasks': typeof TasksRoute
+  '/tax': typeof TaxRoute
+  '/team': typeof TeamRoute
+  '/tickets': typeof TicketsRoute
+  '/time-sheets': typeof TimeSheetsRoute
+  '/user-roles': typeof UserRolesRoute
+  '/companies/$id': typeof CompaniesIdRoute
+  '/contacts/$id': typeof ContactsIdRoute
+  '/customers/client-users': typeof CustomersClientUsersRoute
+  '/deals/$id': typeof DealsIdRoute
+  '/portal/contracts': typeof PortalContractsRoute
+  '/portal/invoices': typeof PortalInvoicesRoute
+  '/portal/payments': typeof PortalPaymentsRoute
+  '/portal/settings': typeof PortalSettingsRoute
+  '/portal/spending': typeof PortalSpendingRoute
+  '/portal/support': typeof PortalSupportRoute
+  '/projects/$id': typeof ProjectsIdRoute
+  '/projects/new': typeof ProjectsNewRoute
+  '/sales/invoices': typeof SalesInvoicesRoute
+  '/portal/': typeof PortalIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/automations'
+    | '/contacts'
+    | '/contracts'
+    | '/deals'
+    | '/email-marketing'
+    | '/estimates'
+    | '/expenses'
+    | '/files'
+    | '/invoices'
+    | '/knowledgebase'
+    | '/leads'
+    | '/login'
+    | '/milestones'
+    | '/payments'
+    | '/portal'
+    | '/products'
+    | '/projects'
+    | '/proposals'
+    | '/refunds'
+    | '/reports'
+    | '/settings'
+    | '/subscriptions'
+    | '/support'
+    | '/tags'
+    | '/tasks'
+    | '/tax'
+    | '/team'
+    | '/tickets'
+    | '/time-sheets'
+    | '/user-roles'
+    | '/companies/$id'
+    | '/contacts/$id'
+    | '/customers/client-users'
+    | '/deals/$id'
+    | '/portal/contracts'
+    | '/portal/invoices'
+    | '/portal/payments'
+    | '/portal/settings'
+    | '/portal/spending'
+    | '/portal/support'
+    | '/projects/$id'
+    | '/projects/new'
+    | '/sales/invoices'
+    | '/portal/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/automations'
+    | '/contacts'
+    | '/contracts'
+    | '/deals'
+    | '/email-marketing'
+    | '/estimates'
+    | '/expenses'
+    | '/files'
+    | '/invoices'
+    | '/knowledgebase'
+    | '/leads'
+    | '/login'
+    | '/milestones'
+    | '/payments'
+    | '/products'
+    | '/projects'
+    | '/proposals'
+    | '/refunds'
+    | '/reports'
+    | '/settings'
+    | '/subscriptions'
+    | '/support'
+    | '/tags'
+    | '/tasks'
+    | '/tax'
+    | '/team'
+    | '/tickets'
+    | '/time-sheets'
+    | '/user-roles'
+    | '/companies/$id'
+    | '/contacts/$id'
+    | '/customers/client-users'
+    | '/deals/$id'
+    | '/portal/contracts'
+    | '/portal/invoices'
+    | '/portal/payments'
+    | '/portal/settings'
+    | '/portal/spending'
+    | '/portal/support'
+    | '/projects/$id'
+    | '/projects/new'
+    | '/sales/invoices'
+    | '/portal'
+  id:
+    | '__root__'
+    | '/'
+    | '/automations'
+    | '/contacts'
+    | '/contracts'
+    | '/deals'
+    | '/email-marketing'
+    | '/estimates'
+    | '/expenses'
+    | '/files'
+    | '/invoices'
+    | '/knowledgebase'
+    | '/leads'
+    | '/login'
+    | '/milestones'
+    | '/payments'
+    | '/portal'
+    | '/products'
+    | '/projects'
+    | '/proposals'
+    | '/refunds'
+    | '/reports'
+    | '/settings'
+    | '/subscriptions'
+    | '/support'
+    | '/tags'
+    | '/tasks'
+    | '/tax'
+    | '/team'
+    | '/tickets'
+    | '/time-sheets'
+    | '/user-roles'
+    | '/companies/$id'
+    | '/contacts/$id'
+    | '/customers/client-users'
+    | '/deals/$id'
+    | '/portal/contracts'
+    | '/portal/invoices'
+    | '/portal/payments'
+    | '/portal/settings'
+    | '/portal/spending'
+    | '/portal/support'
+    | '/projects/$id'
+    | '/projects/new'
+    | '/sales/invoices'
+    | '/portal/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AutomationsRoute: typeof AutomationsRoute
+  ContactsRoute: typeof ContactsRouteWithChildren
+  ContractsRoute: typeof ContractsRoute
+  DealsRoute: typeof DealsRouteWithChildren
+  EmailMarketingRoute: typeof EmailMarketingRoute
+  EstimatesRoute: typeof EstimatesRoute
+  ExpensesRoute: typeof ExpensesRoute
+  FilesRoute: typeof FilesRoute
+  InvoicesRoute: typeof InvoicesRoute
+  KnowledgebaseRoute: typeof KnowledgebaseRoute
+  LeadsRoute: typeof LeadsRoute
+  LoginRoute: typeof LoginRoute
+  MilestonesRoute: typeof MilestonesRoute
+  PaymentsRoute: typeof PaymentsRoute
+  PortalRoute: typeof PortalRouteWithChildren
+  ProductsRoute: typeof ProductsRoute
+  ProjectsRoute: typeof ProjectsRouteWithChildren
+  ProposalsRoute: typeof ProposalsRoute
+  RefundsRoute: typeof RefundsRoute
+  ReportsRoute: typeof ReportsRoute
+  SettingsRoute: typeof SettingsRoute
+  SubscriptionsRoute: typeof SubscriptionsRoute
+  SupportRoute: typeof SupportRoute
+  TagsRoute: typeof TagsRoute
+  TasksRoute: typeof TasksRoute
+  TaxRoute: typeof TaxRoute
+  TeamRoute: typeof TeamRoute
+  TicketsRoute: typeof TicketsRoute
+  TimeSheetsRoute: typeof TimeSheetsRoute
+  UserRolesRoute: typeof UserRolesRoute
+  CompaniesIdRoute: typeof CompaniesIdRoute
+  CustomersClientUsersRoute: typeof CustomersClientUsersRoute
+  SalesInvoicesRoute: typeof SalesInvoicesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/user-roles': {
+      id: '/user-roles'
+      path: '/user-roles'
+      fullPath: '/user-roles'
+      preLoaderRoute: typeof UserRolesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/time-sheets': {
+      id: '/time-sheets'
+      path: '/time-sheets'
+      fullPath: '/time-sheets'
+      preLoaderRoute: typeof TimeSheetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tickets': {
+      id: '/tickets'
+      path: '/tickets'
+      fullPath: '/tickets'
+      preLoaderRoute: typeof TicketsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team': {
+      id: '/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof TeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tax': {
+      id: '/tax'
+      path: '/tax'
+      fullPath: '/tax'
+      preLoaderRoute: typeof TaxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tasks': {
+      id: '/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tags': {
+      id: '/tags'
+      path: '/tags'
+      fullPath: '/tags'
+      preLoaderRoute: typeof TagsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscriptions': {
+      id: '/subscriptions'
+      path: '/subscriptions'
+      fullPath: '/subscriptions'
+      preLoaderRoute: typeof SubscriptionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refunds': {
+      id: '/refunds'
+      path: '/refunds'
+      fullPath: '/refunds'
+      preLoaderRoute: typeof RefundsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/proposals': {
+      id: '/proposals'
+      path: '/proposals'
+      fullPath: '/proposals'
+      preLoaderRoute: typeof ProposalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products': {
+      id: '/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal': {
+      id: '/portal'
+      path: '/portal'
+      fullPath: '/portal'
+      preLoaderRoute: typeof PortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payments': {
+      id: '/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof PaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/milestones': {
+      id: '/milestones'
+      path: '/milestones'
+      fullPath: '/milestones'
+      preLoaderRoute: typeof MilestonesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leads': {
+      id: '/leads'
+      path: '/leads'
+      fullPath: '/leads'
+      preLoaderRoute: typeof LeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/knowledgebase': {
+      id: '/knowledgebase'
+      path: '/knowledgebase'
+      fullPath: '/knowledgebase'
+      preLoaderRoute: typeof KnowledgebaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invoices': {
+      id: '/invoices'
+      path: '/invoices'
+      fullPath: '/invoices'
+      preLoaderRoute: typeof InvoicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/files': {
+      id: '/files'
+      path: '/files'
+      fullPath: '/files'
+      preLoaderRoute: typeof FilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expenses': {
+      id: '/expenses'
+      path: '/expenses'
+      fullPath: '/expenses'
+      preLoaderRoute: typeof ExpensesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/estimates': {
+      id: '/estimates'
+      path: '/estimates'
+      fullPath: '/estimates'
+      preLoaderRoute: typeof EstimatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/email-marketing': {
+      id: '/email-marketing'
+      path: '/email-marketing'
+      fullPath: '/email-marketing'
+      preLoaderRoute: typeof EmailMarketingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deals': {
+      id: '/deals'
+      path: '/deals'
+      fullPath: '/deals'
+      preLoaderRoute: typeof DealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contracts': {
+      id: '/contracts'
+      path: '/contracts'
+      fullPath: '/contracts'
+      preLoaderRoute: typeof ContractsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contacts': {
+      id: '/contacts'
+      path: '/contacts'
+      fullPath: '/contacts'
+      preLoaderRoute: typeof ContactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/automations': {
+      id: '/automations'
+      path: '/automations'
+      fullPath: '/automations'
+      preLoaderRoute: typeof AutomationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +821,202 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portal/': {
+      id: '/portal/'
+      path: '/'
+      fullPath: '/portal/'
+      preLoaderRoute: typeof PortalIndexRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/sales/invoices': {
+      id: '/sales/invoices'
+      path: '/sales/invoices'
+      fullPath: '/sales/invoices'
+      preLoaderRoute: typeof SalesInvoicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/new': {
+      id: '/projects/new'
+      path: '/new'
+      fullPath: '/projects/new'
+      preLoaderRoute: typeof ProjectsNewRouteImport
+      parentRoute: typeof ProjectsRoute
+    }
+    '/projects/$id': {
+      id: '/projects/$id'
+      path: '/$id'
+      fullPath: '/projects/$id'
+      preLoaderRoute: typeof ProjectsIdRouteImport
+      parentRoute: typeof ProjectsRoute
+    }
+    '/portal/support': {
+      id: '/portal/support'
+      path: '/support'
+      fullPath: '/portal/support'
+      preLoaderRoute: typeof PortalSupportRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/portal/spending': {
+      id: '/portal/spending'
+      path: '/spending'
+      fullPath: '/portal/spending'
+      preLoaderRoute: typeof PortalSpendingRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/portal/settings': {
+      id: '/portal/settings'
+      path: '/settings'
+      fullPath: '/portal/settings'
+      preLoaderRoute: typeof PortalSettingsRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/portal/payments': {
+      id: '/portal/payments'
+      path: '/payments'
+      fullPath: '/portal/payments'
+      preLoaderRoute: typeof PortalPaymentsRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/portal/invoices': {
+      id: '/portal/invoices'
+      path: '/invoices'
+      fullPath: '/portal/invoices'
+      preLoaderRoute: typeof PortalInvoicesRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/portal/contracts': {
+      id: '/portal/contracts'
+      path: '/contracts'
+      fullPath: '/portal/contracts'
+      preLoaderRoute: typeof PortalContractsRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/deals/$id': {
+      id: '/deals/$id'
+      path: '/$id'
+      fullPath: '/deals/$id'
+      preLoaderRoute: typeof DealsIdRouteImport
+      parentRoute: typeof DealsRoute
+    }
+    '/customers/client-users': {
+      id: '/customers/client-users'
+      path: '/customers/client-users'
+      fullPath: '/customers/client-users'
+      preLoaderRoute: typeof CustomersClientUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contacts/$id': {
+      id: '/contacts/$id'
+      path: '/$id'
+      fullPath: '/contacts/$id'
+      preLoaderRoute: typeof ContactsIdRouteImport
+      parentRoute: typeof ContactsRoute
+    }
+    '/companies/$id': {
+      id: '/companies/$id'
+      path: '/companies/$id'
+      fullPath: '/companies/$id'
+      preLoaderRoute: typeof CompaniesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface ContactsRouteChildren {
+  ContactsIdRoute: typeof ContactsIdRoute
+}
+
+const ContactsRouteChildren: ContactsRouteChildren = {
+  ContactsIdRoute: ContactsIdRoute,
+}
+
+const ContactsRouteWithChildren = ContactsRoute._addFileChildren(
+  ContactsRouteChildren,
+)
+
+interface DealsRouteChildren {
+  DealsIdRoute: typeof DealsIdRoute
+}
+
+const DealsRouteChildren: DealsRouteChildren = {
+  DealsIdRoute: DealsIdRoute,
+}
+
+const DealsRouteWithChildren = DealsRoute._addFileChildren(DealsRouteChildren)
+
+interface PortalRouteChildren {
+  PortalContractsRoute: typeof PortalContractsRoute
+  PortalInvoicesRoute: typeof PortalInvoicesRoute
+  PortalPaymentsRoute: typeof PortalPaymentsRoute
+  PortalSettingsRoute: typeof PortalSettingsRoute
+  PortalSpendingRoute: typeof PortalSpendingRoute
+  PortalSupportRoute: typeof PortalSupportRoute
+  PortalIndexRoute: typeof PortalIndexRoute
+}
+
+const PortalRouteChildren: PortalRouteChildren = {
+  PortalContractsRoute: PortalContractsRoute,
+  PortalInvoicesRoute: PortalInvoicesRoute,
+  PortalPaymentsRoute: PortalPaymentsRoute,
+  PortalSettingsRoute: PortalSettingsRoute,
+  PortalSpendingRoute: PortalSpendingRoute,
+  PortalSupportRoute: PortalSupportRoute,
+  PortalIndexRoute: PortalIndexRoute,
+}
+
+const PortalRouteWithChildren =
+  PortalRoute._addFileChildren(PortalRouteChildren)
+
+interface ProjectsRouteChildren {
+  ProjectsIdRoute: typeof ProjectsIdRoute
+  ProjectsNewRoute: typeof ProjectsNewRoute
+}
+
+const ProjectsRouteChildren: ProjectsRouteChildren = {
+  ProjectsIdRoute: ProjectsIdRoute,
+  ProjectsNewRoute: ProjectsNewRoute,
+}
+
+const ProjectsRouteWithChildren = ProjectsRoute._addFileChildren(
+  ProjectsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AutomationsRoute: AutomationsRoute,
+  ContactsRoute: ContactsRouteWithChildren,
+  ContractsRoute: ContractsRoute,
+  DealsRoute: DealsRouteWithChildren,
+  EmailMarketingRoute: EmailMarketingRoute,
+  EstimatesRoute: EstimatesRoute,
+  ExpensesRoute: ExpensesRoute,
+  FilesRoute: FilesRoute,
+  InvoicesRoute: InvoicesRoute,
+  KnowledgebaseRoute: KnowledgebaseRoute,
+  LeadsRoute: LeadsRoute,
+  LoginRoute: LoginRoute,
+  MilestonesRoute: MilestonesRoute,
+  PaymentsRoute: PaymentsRoute,
+  PortalRoute: PortalRouteWithChildren,
+  ProductsRoute: ProductsRoute,
+  ProjectsRoute: ProjectsRouteWithChildren,
+  ProposalsRoute: ProposalsRoute,
+  RefundsRoute: RefundsRoute,
+  ReportsRoute: ReportsRoute,
+  SettingsRoute: SettingsRoute,
+  SubscriptionsRoute: SubscriptionsRoute,
+  SupportRoute: SupportRoute,
+  TagsRoute: TagsRoute,
+  TasksRoute: TasksRoute,
+  TaxRoute: TaxRoute,
+  TeamRoute: TeamRoute,
+  TicketsRoute: TicketsRoute,
+  TimeSheetsRoute: TimeSheetsRoute,
+  UserRolesRoute: UserRolesRoute,
+  CompaniesIdRoute: CompaniesIdRoute,
+  CustomersClientUsersRoute: CustomersClientUsersRoute,
+  SalesInvoicesRoute: SalesInvoicesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
