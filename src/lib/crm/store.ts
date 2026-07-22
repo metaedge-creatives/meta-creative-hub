@@ -848,7 +848,24 @@ export const useCRM = create<CRMState & Actions>()(
           consultationBookings: (s.consultationBookings ?? []).filter((b) => b.id !== id),
         })),
     }),
-    { name: "metaedge-crm-v6" },
+    {
+      name: "metaedge-crm-v6",
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<CRMState>;
+        return { ...current, ...p, ...{
+          lists: p.lists ?? current.lists ?? {},
+          serviceRequests: p.serviceRequests ?? [],
+          consultationBookings: p.consultationBookings ?? [],
+          clientReports: p.clientReports ?? [],
+          proposals: (p as any).proposals ?? (current as any).proposals ?? [],
+          notifications: p.notifications ?? [],
+          exportHistory: p.exportHistory ?? [],
+          errorLogs: p.errorLogs ?? [],
+          clientUsers: p.clientUsers ?? current.clientUsers ?? [],
+          users: p.users ?? current.users ?? [],
+        } } as CRMState & Actions;
+      },
+    },
   ),
 );
 
