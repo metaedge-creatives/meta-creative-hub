@@ -124,21 +124,30 @@ function ProjectsPage() {
         subtitle={`${projects.length} in flight`}
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} className="font-bold">
-              <Upload className="h-3.5 w-3.5" /> Import
-            </Button>
+            <ImportDialog
+              entityLabel="projects"
+              triggerLabel="Import CSV"
+              fields={[
+                { key: "name", label: "Name", required: true },
+                { key: "brief", label: "Brief" },
+                { key: "status", label: "Status (brief|in_progress|review|delivered)" },
+                { key: "deadline", label: "Deadline (YYYY-MM-DD)" },
+                { key: "companyId", label: "Company ID" },
+                { key: "contactId", label: "Contact ID" },
+                { key: "tags", label: "Tags (; separated)" },
+              ]}
+              sample={[{
+                name: "Website Redesign", brief: "Rebrand + new marketing site",
+                status: "in_progress", deadline: "2026-08-01",
+                companyId: "", contactId: "", tags: "design;web",
+              }]}
+              onImport={importProjectRows}
+            />
             <ExportMenu
               filenameBase="projects"
               title="MetaEdge Creatives — Projects"
               rows={filtered}
               columns={PROJECT_COLS}
-            />
-            <input
-              ref={fileRef}
-              type="file"
-              accept=".json,.csv"
-              className="hidden"
-              onChange={(e) => { const f = e.target.files?.[0]; if (f) importProjects(f); e.target.value = ""; }}
             />
             <NewProjectLink />
           </div>
