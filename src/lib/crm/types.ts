@@ -456,4 +456,16 @@ export interface CRMState {
   notifications: AppNotification[];
   serviceRequests: ServiceRequest[];
   clientReports: ClientReport[];
+  exportHistory: ExportRecord[];
+}
+
+export interface ExportRecord {
+  id: string;
+  at: string;
+  userId: string | null;
+  userName: string;
+  entity: string;
+  format: "csv" | "pdf" | "json";
+  filename: string;
+  rowCount: number;
 }

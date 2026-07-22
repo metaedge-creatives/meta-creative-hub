@@ -98,6 +98,7 @@ const seed: CRMState = {
   notifications: [],
   serviceRequests: [],
   clientReports: [],
+  exportHistory: [],
 };
 
 interface Actions {
@@ -201,6 +202,8 @@ interface Actions {
 
   pushErrorLog: (message: string, level?: ErrorLog["level"]) => void;
   clearErrorLogs: () => void;
+  logExport: (entry: { entity: string; format: "csv" | "pdf" | "json"; filename: string; rowCount: number }) => void;
+  clearExportHistory: () => void;
   clearCache: () => void;
 
   addNotification: (n: { kind: NotificationKind; title: string; body?: string; link?: string }) => AppNotification;
@@ -679,6 +682,19 @@ export const useCRM = create<CRMState & Actions>()(
           ].slice(0, 200),
         })),
       clearErrorLogs: () => set({ errorLogs: [] }),
+      logExport: (entry) => {
+        const s = get();
+        const user = s.users.find((u) => u.id === s.currentUserId);
+        const rec = {
+          id: uid(),
+          at: new Date().toISOString(),
+          userId: user?.id ?? null,
+          userName: user?.name ?? "Unknown",
+          ...entry,
+        };
+        set((st) => ({ exportHistory: [rec, ...st.exportHistory].slice(0, 500) }));
+      },
+      clearExportHistory: () => set({ exportHistory: [] }),
       clearCache: () => {
         try {
           sessionStorage.clear();
