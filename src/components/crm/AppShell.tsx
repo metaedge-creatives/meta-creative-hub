@@ -115,6 +115,7 @@ const NAV_SECTIONS: NavSection[] = [
   {
     label: "Communication",
     items: [
+      { to: "/service-requests", label: "Service Requests", icon: Inbox, match: (p) => p.startsWith("/service-requests") },
       { to: "/email-marketing", label: "Email Marketing", icon: Mail, match: (p) => p.startsWith("/email-marketing") },
       { to: "/proposals", label: "Proposals", icon: FileText, match: (p) => p.startsWith("/proposals") },
       { to: "/contracts", label: "Contracts", icon: ScrollText, match: (p) => p.startsWith("/contracts") },
