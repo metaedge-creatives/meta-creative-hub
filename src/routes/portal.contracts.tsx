@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useCRM } from "@/lib/crm/store";
-import { useCurrentClientUser, formatCurrency, formatDate } from "@/lib/crm/hooks";
+import { useCurrentClientUser, formatCurrency, formatDate, isOwnedByClient } from "@/lib/crm/hooks";
 import type { Contract } from "@/lib/crm/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,11 +22,7 @@ function PortalContracts() {
 
   const mine = useMemo(() => {
     if (!client) return [];
-    const cn = client.name.toLowerCase();
-    const cc = (client.companyName || "").toLowerCase();
-    return contracts.filter(
-      (c) => c.clientName.toLowerCase() === cn || (cc && c.clientName.toLowerCase() === cc),
-    );
+    return contracts.filter((c) => isOwnedByClient(c, client));
   }, [client, contracts]);
 
   const filtered = mine.filter((c) => q === "" || c.title.toLowerCase().includes(q.toLowerCase()));

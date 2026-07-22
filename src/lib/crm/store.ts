@@ -32,6 +32,8 @@ import type {
   ServiceRequest,
   ServiceRequestStatus,
   ClientReport,
+  ConsultationBooking,
+  ConsultationStatus,
 } from "./types";
 import type { ListItem, ErrorLog } from "./types";
 import type { AppNotification, NotificationKind } from "./types";
@@ -40,6 +42,32 @@ const uid = () =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
     ? crypto.randomUUID()
     : Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+function resolveClientUserId(
+  clientUsers: ClientUser[],
+  ref: { email?: string; name?: string; company?: string },
+): string | undefined {
+  const email = ref.email?.trim().toLowerCase();
+  const name = ref.name?.trim().toLowerCase();
+  const company = ref.company?.trim().toLowerCase();
+  if (email) {
+    const hit = clientUsers.find((c) => c.email.trim().toLowerCase() === email);
+    if (hit) return hit.id;
+  }
+  if (name) {
+    const hit = clientUsers.find((c) => {
+      const cn = c.name.trim().toLowerCase();
+      const cc = (c.companyName || "").trim().toLowerCase();
+      return cn === name || (cc && cc === name);
+    });
+    if (hit) return hit.id;
+  }
+  if (company) {
+    const hit = clientUsers.find((c) => (c.companyName || "").trim().toLowerCase() === company);
+    if (hit) return hit.id;
+  }
+  return undefined;
+}
 
 const allPerms: Permissions = {
   contacts: true,
@@ -99,6 +127,7 @@ const seed: CRMState = {
   serviceRequests: [],
   clientReports: [],
   exportHistory: [],
+  consultationBookings: [],
 };
 
 interface Actions {
@@ -221,6 +250,13 @@ interface Actions {
   addClientReport: (r: Omit<ClientReport, "id" | "createdAt">) => ClientReport;
   updateClientReport: (id: string, patch: Partial<ClientReport>) => void;
   deleteClientReport: (id: string) => void;
+
+  addConsultationBooking: (
+    b: Omit<ConsultationBooking, "id" | "createdAt" | "status"> & { status?: ConsultationStatus },
+  ) => ConsultationBooking;
+  updateConsultationBooking: (id: string, patch: Partial<ConsultationBooking>) => void;
+  setConsultationStatus: (id: string, status: ConsultationStatus) => void;
+  deleteConsultationBooking: (id: string) => void;
 }
 
 export const useCRM = create<CRMState & Actions>()(
@@ -424,7 +460,8 @@ export const useCRM = create<CRMState & Actions>()(
       deleteNote: (id) => set((s) => ({ notes: s.notes.filter((n) => n.id !== id) })),
 
       addInvoice: (i) => {
-        const item: Invoice = { ...i, id: uid(), createdAt: new Date().toISOString() };
+        const clientUserId = i.clientUserId ?? resolveClientUserId(get().clientUsers, { email: i.clientEmail, name: i.clientName });
+        const item: Invoice = { ...i, clientUserId, id: uid(), createdAt: new Date().toISOString() };
         set((s) => ({ invoices: [item, ...s.invoices] }));
         get().addNotification({ kind: "invoice", title: "Invoice created", body: item.number ? `#${item.number} · ${item.clientName}` : item.clientName, link: "/invoices" });
         return item;
@@ -465,7 +502,8 @@ export const useCRM = create<CRMState & Actions>()(
       deleteProposal: (id) => set((s) => ({ proposals: s.proposals.filter((p) => p.id !== id) })),
 
       addContract: (c) => {
-        const item: Contract = { ...c, id: uid(), createdAt: new Date().toISOString() };
+        const clientUserId = c.clientUserId ?? resolveClientUserId(get().clientUsers, { email: c.clientEmail, name: c.clientName });
+        const item: Contract = { ...c, clientUserId, id: uid(), createdAt: new Date().toISOString() };
         set((s) => ({ contracts: [item, ...s.contracts] }));
         get().addNotification({ kind: "contract", title: "New contract", body: item.title, link: "/contracts" });
         return item;
@@ -776,6 +814,39 @@ export const useCRM = create<CRMState & Actions>()(
         })),
       deleteClientReport: (id) =>
         set((s) => ({ clientReports: s.clientReports.filter((r) => r.id !== id) })),
+
+      addConsultationBooking: (b) => {
+        const item: ConsultationBooking = {
+          ...b,
+          status: b.status ?? "requested",
+          id: uid(),
+          createdAt: new Date().toISOString(),
+        };
+        set((s) => ({ consultationBookings: [item, ...(s.consultationBookings ?? [])] }));
+        get().addNotification({
+          kind: "ticket",
+          title: "New consultation request",
+          body: `${item.clientName}${item.topic ? " · " + item.topic : ""}`,
+          link: "/portal/consultation",
+        });
+        return item;
+      },
+      updateConsultationBooking: (id, patch) =>
+        set((s) => ({
+          consultationBookings: (s.consultationBookings ?? []).map((b) =>
+            b.id === id ? { ...b, ...patch } : b,
+          ),
+        })),
+      setConsultationStatus: (id, status) =>
+        set((s) => ({
+          consultationBookings: (s.consultationBookings ?? []).map((b) =>
+            b.id === id ? { ...b, status } : b,
+          ),
+        })),
+      deleteConsultationBooking: (id) =>
+        set((s) => ({
+          consultationBookings: (s.consultationBookings ?? []).filter((b) => b.id !== id),
+        })),
     }),
     { name: "metaedge-crm-v6" },
   ),
