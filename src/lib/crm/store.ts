@@ -495,7 +495,8 @@ export const useCRM = create<CRMState & Actions>()(
       deleteProposal: (id) => set((s) => ({ proposals: s.proposals.filter((p) => p.id !== id) })),
 
       addContract: (c) => {
-        const item: Contract = { ...c, id: uid(), createdAt: new Date().toISOString() };
+        const clientUserId = c.clientUserId ?? resolveClientUserId(get().clientUsers, { email: c.clientEmail, name: c.clientName });
+        const item: Contract = { ...c, clientUserId, id: uid(), createdAt: new Date().toISOString() };
         set((s) => ({ contracts: [item, ...s.contracts] }));
         get().addNotification({ kind: "contract", title: "New contract", body: item.title, link: "/contracts" });
         return item;
