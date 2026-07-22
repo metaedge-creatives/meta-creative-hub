@@ -35,11 +35,7 @@ function PortalInvoices() {
 
   const mine = useMemo(() => {
     if (!client) return [];
-    const cn = client.name.toLowerCase();
-    const cc = (client.companyName || "").toLowerCase();
-    return invoices.filter(
-      (i) => i.clientName.toLowerCase() === cn || (cc && i.clientName.toLowerCase() === cc),
-    );
+    return invoices.filter((i) => isOwnedByClient(i, client));
   }, [client, invoices]);
 
   const filtered = mine.filter(
