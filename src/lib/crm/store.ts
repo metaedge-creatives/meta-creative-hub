@@ -29,6 +29,9 @@ import type {
   CampaignStatus,
   ClientUser,
   EmailConfig,
+  ServiceRequest,
+  ServiceRequestStatus,
+  ClientReport,
 } from "./types";
 import type { ListItem, ErrorLog } from "./types";
 import type { AppNotification, NotificationKind } from "./types";
@@ -93,6 +96,8 @@ const seed: CRMState = {
   lists: {},
   errorLogs: [],
   notifications: [],
+  serviceRequests: [],
+  clientReports: [],
 };
 
 interface Actions {
