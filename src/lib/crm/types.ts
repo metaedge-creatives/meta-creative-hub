@@ -413,6 +413,18 @@ export interface PasswordResetCode {
   expiresAt: string;
 }
 
+export interface PendingSignup {
+  email: string;
+  code: string;
+  expiresAt: string;
+  data: {
+    name: string;
+    password: string;
+    companyName?: string;
+    phone?: string;
+  };
+}
+
 export interface ListItem {
   id: string;
   name: string;
