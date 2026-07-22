@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useCRM } from "@/lib/crm/store";
 import { useCurrentClientUser } from "@/lib/crm/hooks";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Layers, Send, CheckCircle2, Search, MessageSquarePlus } from "lucide-react";
+import { Layers, Send, CheckCircle2, Search, MessageSquarePlus, ClipboardList, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/portal/services")({
   head: () => ({ meta: [{ title: "Services · Client Portal" }] }),
