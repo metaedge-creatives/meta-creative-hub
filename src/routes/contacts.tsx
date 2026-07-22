@@ -130,21 +130,30 @@ function ContactsPage() {
         subtitle="Companies and the people behind them."
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} className="font-bold">
-              <Upload className="h-3.5 w-3.5" /> Import
-            </Button>
+            <ImportDialog
+              entityLabel="clients"
+              triggerLabel="Import CSV"
+              fields={[
+                { key: "name", label: "Name", required: true },
+                { key: "email", label: "Email" },
+                { key: "firstName", label: "First Name" },
+                { key: "lastName", label: "Last Name" },
+                { key: "category", label: "Category" },
+                { key: "industry", label: "Industry" },
+                { key: "website", label: "Website" },
+                { key: "notes", label: "Notes" },
+              ]}
+              sample={[{
+                name: "Acme Inc", email: "hello@acme.com", firstName: "Ada", lastName: "Lovelace",
+                category: "Retainer", industry: "SaaS", website: "https://acme.com", notes: "",
+              }]}
+              onImport={importClientsRows}
+            />
             <ExportMenu
               filenameBase="clients"
               title="MetaEdge Creatives — Clients"
               rows={filteredCompanies}
               columns={CLIENT_COLS}
-            />
-            <input
-              ref={fileRef}
-              type="file"
-              accept=".json,.csv"
-              className="hidden"
-              onChange={(e) => { const f = e.target.files?.[0]; if (f) importClients(f); e.target.value = ""; }}
             />
             <NewContactDialog />
             <NewCompanyDialog />
