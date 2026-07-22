@@ -30,7 +30,7 @@ function toCSV(rows: any[], columns?: Col[]): string {
         Object.keys(r ?? {}).forEach((k) => set.add(k));
         return set;
       }, new Set()),
-    ).map((key) => ({ key }));
+    ).map((key): Col => ({ key }));
   const esc = (s: string) => `"${s.replace(/"/g, '""')}"`;
   const header = cols.map((c) => esc(c.label ?? c.key)).join(",");
   const body = rows
