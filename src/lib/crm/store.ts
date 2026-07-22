@@ -175,6 +175,7 @@ interface Actions {
   addClientUser: (c: Omit<ClientUser, "id" | "createdAt">) => ClientUser;
   updateClientUser: (id: string, patch: Partial<ClientUser>) => void;
   deleteClientUser: (id: string) => void;
+  resendClientInvite: (id: string) => { ok: boolean; error?: string; user?: ClientUser };
 
   clientSignup: (input: { name: string; email: string; password: string; companyName?: string; phone?: string }) => { ok: boolean; error?: string; user?: ClientUser };
   clientLogin: (email: string, password: string) => { ok: boolean; error?: string };
@@ -508,6 +509,26 @@ export const useCRM = create<CRMState & Actions>()(
         set((s) => ({ clientUsers: s.clientUsers.map((c) => (c.id === id ? { ...c, ...patch } : c)) })),
       deleteClientUser: (id) =>
         set((s) => ({ clientUsers: s.clientUsers.filter((c) => c.id !== id) })),
+      resendClientInvite: (id) => {
+        const user = get().clientUsers.find((c) => c.id === id);
+        if (!user) return { ok: false, error: "Client user not found" };
+        const now = new Date().toISOString();
+        const patch: Partial<ClientUser> = {
+          lastInvitedAt: now,
+          inviteCount: (user.inviteCount ?? 0) + 1,
+          status: user.status === "active" ? user.status : "invited",
+        };
+        set((s) => ({
+          clientUsers: s.clientUsers.map((c) => (c.id === id ? { ...c, ...patch } : c)),
+        }));
+        get().addNotification({
+          kind: "system",
+          title: "Invite resent",
+          body: `Invitation email queued for ${user.email}`,
+          link: "/customers/client-users",
+        });
+        return { ok: true, user: { ...user, ...patch } };
+      },
 
       clientSignup: (input) => {
         const emailNorm = input.email.trim().toLowerCase();
