@@ -814,6 +814,39 @@ export const useCRM = create<CRMState & Actions>()(
         })),
       deleteClientReport: (id) =>
         set((s) => ({ clientReports: s.clientReports.filter((r) => r.id !== id) })),
+
+      addConsultationBooking: (b) => {
+        const item: ConsultationBooking = {
+          ...b,
+          status: b.status ?? "requested",
+          id: uid(),
+          createdAt: new Date().toISOString(),
+        };
+        set((s) => ({ consultationBookings: [item, ...(s.consultationBookings ?? [])] }));
+        get().addNotification({
+          kind: "ticket",
+          title: "New consultation request",
+          body: `${item.clientName}${item.topic ? " · " + item.topic : ""}`,
+          link: "/portal/consultation",
+        });
+        return item;
+      },
+      updateConsultationBooking: (id, patch) =>
+        set((s) => ({
+          consultationBookings: (s.consultationBookings ?? []).map((b) =>
+            b.id === id ? { ...b, ...patch } : b,
+          ),
+        })),
+      setConsultationStatus: (id, status) =>
+        set((s) => ({
+          consultationBookings: (s.consultationBookings ?? []).map((b) =>
+            b.id === id ? { ...b, status } : b,
+          ),
+        })),
+      deleteConsultationBooking: (id) =>
+        set((s) => ({
+          consultationBookings: (s.consultationBookings ?? []).filter((b) => b.id !== id),
+        })),
     }),
     { name: "metaedge-crm-v6" },
   ),
