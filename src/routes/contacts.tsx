@@ -101,43 +101,24 @@ function ContactsPage() {
     { key: "createdAt", label: "Created" },
   ];
 
-  const importClients = async (file: File) => {
-    try {
-      const text = await file.text();
-      let rows: any[] = [];
-      if (file.name.endsWith(".json")) {
-        const parsed = JSON.parse(text);
-        rows = Array.isArray(parsed) ? parsed : [parsed];
-      } else {
-        // simple CSV: name,email,category,...
-        const lines = text.split(/\r?\n/).filter(Boolean);
-        const headers = lines[0].split(",").map((h) => h.trim());
-        rows = lines.slice(1).map((line) => {
-          const cols = line.split(",");
-          const obj: any = {};
-          headers.forEach((h, i) => (obj[h] = cols[i]?.trim()));
-          return obj;
-        });
-      }
-      let count = 0;
-      for (const r of rows) {
-        if (!r.name && !r.company && !r.companyName) continue;
-        addCompany({
-          name: (r.name || r.company || r.companyName || "").trim(),
-          email: r.email,
-          firstName: r.firstName,
-          lastName: r.lastName,
-          category: r.category || "Default",
-          industry: r.industry,
-          website: r.website,
-          notes: r.notes,
-        } as any);
-        count++;
-      }
-      alert(`Imported ${count} client${count === 1 ? "" : "s"}.`);
-    } catch (e) {
-      alert("Import failed: " + (e instanceof Error ? e.message : "invalid file"));
+  const importClientsRows = (rows: Record<string, string>[]) => {
+    let count = 0;
+    for (const r of rows) {
+      const name = (r.name || r.company || r.companyName || "").trim();
+      if (!name) continue;
+      addCompany({
+        name,
+        email: r.email || undefined,
+        firstName: r.firstName || undefined,
+        lastName: r.lastName || undefined,
+        category: r.category || "Default",
+        industry: r.industry || undefined,
+        website: r.website || undefined,
+        notes: r.notes || undefined,
+      } as any);
+      count++;
     }
+    return count;
   };
 
   if (!can) return <NoAccess module="Contacts" />;
