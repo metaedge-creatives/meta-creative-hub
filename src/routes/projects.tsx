@@ -84,15 +84,16 @@ function ProjectsPage() {
       return n;
     });
 
-  const exportProjects = (rows = projects) => {
-    const blob = new Blob([JSON.stringify(rows, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `projects-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-  };
+  const PROJECT_COLS = [
+    { key: "name", label: "Name" },
+    { key: "brief", label: "Brief" },
+    { key: "status", label: "Status" },
+    { key: "deadline", label: "Deadline" },
+    { key: "companyId", label: "Company" },
+    { key: "contactId", label: "Contact" },
+    { key: "tags", label: "Tags" },
+    { key: "createdAt", label: "Created" },
+  ];
 
   const importProjects = async (file: File) => {
     try {
