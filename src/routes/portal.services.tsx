@@ -13,7 +13,17 @@ export const Route = createFileRoute("/portal/services")({
   component: PortalServices,
 });
 
+const DEFAULT_SERVICES: Array<{ name: string; description: string; category: string; price?: number; unit?: string }> = [
+  { name: "Brand Identity", description: "Logo, palette, typography and full brand guidelines.", category: "Branding", price: 1500, unit: "project" },
+  { name: "Website Design & Build", description: "Modern, responsive website tailored to your brand.", category: "Web", price: 3500, unit: "project" },
+  { name: "Social Media Management", description: "Content strategy, design and posting across platforms.", category: "Social", price: 900, unit: "month" },
+  { name: "Performance Ads", description: "Meta & Google ads with weekly performance reports.", category: "Ads", price: 750, unit: "month" },
+  { name: "SEO Optimization", description: "On-page and technical SEO to boost organic traffic.", category: "SEO", price: 600, unit: "month" },
+  { name: "Video Production", description: "Reels, ads and product videos — end-to-end.", category: "Video", price: 1200, unit: "project" },
+];
+
 function PortalServices() {
+
   const client = useCurrentClientUser();
   const products = useCRM((s) => s.getList("products"));
   const addServiceRequest = useCRM((s) => s.addServiceRequest);
