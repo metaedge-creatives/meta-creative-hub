@@ -629,6 +629,8 @@ export const useCRM = create<CRMState & Actions>()(
         const id = get().currentClientUserId;
         if (!id) return;
         set((s) => ({ clientUsers: s.clientUsers.map((c) => (c.id === id ? { ...c, ...patch } : c)) }));
+        const updated = get().clientUsers.find((c) => c.id === id);
+        if (updated) void pushClientUser(updated);
       },
       requestClientPasswordReset: (email) => {
         const emailNorm = email.trim().toLowerCase();
