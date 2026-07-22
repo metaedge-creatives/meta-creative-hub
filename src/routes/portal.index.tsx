@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useCRM } from "@/lib/crm/store";
-import { useCurrentClientUser } from "@/lib/crm/hooks";
+import { useCurrentClientUser, isOwnedByClient } from "@/lib/crm/hooks";
 import { formatCurrency, formatDate } from "@/lib/crm/hooks";
 import { FileText, ScrollText, CreditCard, LifeBuoy, ArrowRight, Sparkles, CalendarClock } from "lucide-react";
 
