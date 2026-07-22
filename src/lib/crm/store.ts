@@ -660,6 +660,8 @@ export const useCRM = create<CRMState & Actions>()(
           clientUsers: s.clientUsers.map((c) => (c.id === user.id ? { ...c, password: newPassword } : c)),
           clientResetCodes: s.clientResetCodes.filter((r) => r.userId !== user.id),
         }));
+        const updated = get().clientUsers.find((c) => c.id === user.id);
+        if (updated) void pushClientUser(updated);
         return { ok: true };
       },
 
