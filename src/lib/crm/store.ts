@@ -250,6 +250,13 @@ interface Actions {
   addClientReport: (r: Omit<ClientReport, "id" | "createdAt">) => ClientReport;
   updateClientReport: (id: string, patch: Partial<ClientReport>) => void;
   deleteClientReport: (id: string) => void;
+
+  addConsultationBooking: (
+    b: Omit<ConsultationBooking, "id" | "createdAt" | "status"> & { status?: ConsultationStatus },
+  ) => ConsultationBooking;
+  updateConsultationBooking: (id: string, patch: Partial<ConsultationBooking>) => void;
+  setConsultationStatus: (id: string, status: ConsultationStatus) => void;
+  deleteConsultationBooking: (id: string) => void;
 }
 
 export const useCRM = create<CRMState & Actions>()(
