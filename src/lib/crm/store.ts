@@ -208,6 +208,15 @@ interface Actions {
   markAllNotificationsRead: () => void;
   deleteNotification: (id: string) => void;
   clearNotifications: () => void;
+
+  addServiceRequest: (r: Omit<ServiceRequest, "id" | "createdAt" | "status"> & { status?: ServiceRequestStatus }) => ServiceRequest;
+  updateServiceRequest: (id: string, patch: Partial<ServiceRequest>) => void;
+  setServiceRequestStatus: (id: string, status: ServiceRequestStatus) => void;
+  deleteServiceRequest: (id: string) => void;
+
+  addClientReport: (r: Omit<ClientReport, "id" | "createdAt">) => ClientReport;
+  updateClientReport: (id: string, patch: Partial<ClientReport>) => void;
+  deleteClientReport: (id: string) => void;
 }
 
 export const useCRM = create<CRMState & Actions>()(
