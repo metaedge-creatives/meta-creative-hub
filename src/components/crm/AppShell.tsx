@@ -280,12 +280,19 @@ export function AppShell() {
   const user = useCurrentUser();
 
   const hydrateClientUsersFromCloud = useCRM((s) => s.hydrateClientUsersFromCloud);
+  const hydrateServiceRequestsFromCloud = useCRM((s) => s.hydrateServiceRequestsFromCloud);
 
-  // Pull the latest shared client-user list from Lovable Cloud on mount so
-  // clients who signed up on other devices appear immediately.
+  // Pull the latest shared data from Lovable Cloud on mount so cross-device
+  // clients and their service requests appear immediately, then poll gently
+  // so the admin inbox stays live without a refresh.
   useEffect(() => {
     void hydrateClientUsersFromCloud();
-  }, [hydrateClientUsersFromCloud]);
+    void hydrateServiceRequestsFromCloud();
+    const t = setInterval(() => {
+      void hydrateServiceRequestsFromCloud();
+    }, 20000);
+    return () => clearInterval(t);
+  }, [hydrateClientUsersFromCloud, hydrateServiceRequestsFromCloud]);
 
   // Cross-tab realtime sync: when any other tab updates the store,
   // rehydrate this tab so UI stays live.
