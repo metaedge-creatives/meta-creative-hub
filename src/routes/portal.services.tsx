@@ -42,13 +42,17 @@ export const Route = createFileRoute("/portal/services")({
   component: PortalServices,
 });
 
-const DEFAULT_SERVICES: Array<{ name: string; description: string; category: string; price?: number; unit?: string }> = [
-  { name: "Brand Identity", description: "Logo, palette, typography and full brand guidelines.", category: "Branding", price: 1500, unit: "project" },
-  { name: "Website Design & Build", description: "Modern, responsive website tailored to your brand.", category: "Web", price: 3500, unit: "project" },
-  { name: "Social Media Management", description: "Content strategy, design and posting across platforms.", category: "Social", price: 900, unit: "month" },
-  { name: "Performance Ads", description: "Meta & Google ads with weekly performance reports.", category: "Ads", price: 750, unit: "month" },
-  { name: "SEO Optimization", description: "On-page and technical SEO to boost organic traffic.", category: "SEO", price: 600, unit: "month" },
-  { name: "Video Production", description: "Reels, ads and product videos — end-to-end.", category: "Video", price: 1200, unit: "project" },
+const DEFAULT_SERVICES: Array<{ name: string; description: string; category: string }> = [
+  { name: "Web Development", description: "Modern, responsive websites and web apps built for performance.", category: "Web" },
+  { name: "UI/UX Designing", description: "Intuitive interfaces and user experiences that convert.", category: "Design" },
+  { name: "Branding", description: "Logo, palette, typography and full brand guidelines.", category: "Branding" },
+  { name: "AI Automations", description: "Automate workflows and repetitive tasks with AI.", category: "AI" },
+  { name: "Custom Business Solution", description: "Tailored software solutions built around your business.", category: "Custom" },
+  { name: "CRM Automation", description: "Streamline your sales and client workflows end-to-end.", category: "CRM" },
+  { name: "LLC Formation", description: "Register and launch your LLC — done for you.", category: "Business" },
+  { name: "Video Editing", description: "Reels, ads and long-form video editing.", category: "Video" },
+  { name: "Graphic Designing", description: "Marketing creatives, print and digital graphics.", category: "Design" },
+  { name: "Social Media Management", description: "Content strategy, design and posting across platforms.", category: "Social" },
 ];
 
 function PortalServices() {
@@ -79,7 +83,7 @@ function PortalServices() {
       id: `default-${s.name.toLowerCase().replace(/\s+/g, "-")}`,
       name: s.name,
       description: s.description,
-      meta: { category: s.category, price: s.price, unit: s.unit },
+      meta: { category: s.category },
     })) as any[];
   }, [products]);
 
@@ -96,7 +100,7 @@ function PortalServices() {
   const requestFromProduct = (id: string) => {
     setSelected(id);
     const p = products.find((x) => x.id === id);
-    setForm({ title: p ? `Book: ${p.name}` : "", description: p?.description ?? "", budget: String(p?.meta?.price ?? "") });
+    setForm({ title: p ? `Request: ${p.name}` : "", description: p?.description ?? "", budget: "" });
     setErrors({});
     setCustomOpen(true);
   };
@@ -188,11 +192,7 @@ function PortalServices() {
                 <div className="mt-1 text-[10px] font-black uppercase tracking-widest text-primary">{s.meta.category}</div>
               )}
               {s.description && <p className="mt-2 line-clamp-3 text-[12px]" style={{ color: "#666" }}>{s.description}</p>}
-              <div className="mt-auto flex items-center justify-between pt-4">
-                <div className="text-lg font-black">
-                  {s.meta?.price ? `$${Number(s.meta.price).toLocaleString()}` : <span className="text-xs text-muted-foreground">Custom quote</span>}
-                  {s.meta?.unit && <span className="text-[11px] font-bold text-muted-foreground"> / {s.meta.unit}</span>}
-                </div>
+              <div className="mt-auto flex justify-end pt-4">
                 <Button size="sm" onClick={() => requestFromProduct(s.id)}><Send className="h-3.5 w-3.5" /> Request</Button>
               </div>
             </div>
