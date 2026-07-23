@@ -892,25 +892,56 @@ export const useCRM = create<CRMState & Actions>()(
           body: `${item.clientName} · ${item.title}${item.budget ? ` · $${Number(item.budget).toLocaleString()}` : ""}`,
           link: "/service-requests",
         });
+        void pushServiceRequest(item);
         return item;
       },
-      updateServiceRequest: (id, patch) =>
+      updateServiceRequest: (id, patch) => {
+        let updated: ServiceRequest | undefined;
         set((s) => ({
-          serviceRequests: s.serviceRequests.map((r) =>
-            r.id === id ? { ...r, ...patch, updatedAt: new Date().toISOString() } : r,
-          ),
-        })),
-      setServiceRequestStatus: (id, status) =>
+          serviceRequests: s.serviceRequests.map((r) => {
+            if (r.id !== id) return r;
+            updated = { ...r, ...patch, updatedAt: new Date().toISOString() };
+            return updated;
+          }),
+        }));
+        if (updated) void pushServiceRequest(updated);
+      },
+      setServiceRequestStatus: (id, status) => {
+        let updated: ServiceRequest | undefined;
         set((s) => ({
           serviceRequests: s.serviceRequests.map((r) => {
             if (r.id !== id) return r;
             const at = new Date().toISOString();
             const history = [...(r.history ?? []), { at, status }];
-            return { ...r, status, updatedAt: at, history };
+            updated = { ...r, status, updatedAt: at, history };
+            return updated;
           }),
-        })),
-      deleteServiceRequest: (id) =>
-        set((s) => ({ serviceRequests: s.serviceRequests.filter((r) => r.id !== id) })),
+        }));
+        if (updated) void pushServiceRequest(updated);
+      },
+      deleteServiceRequest: (id) => {
+        set((s) => ({ serviceRequests: s.serviceRequests.filter((r) => r.id !== id) }));
+        void deleteServiceRequestRemote(id);
+      },
+
+      hydrateServiceRequestsFromCloud: async () => {
+        const remote = await fetchAllServiceRequests();
+        if (!remote) return;
+        const prevIds = new Set(get().serviceRequests.map((r) => r.id));
+        const merged = mergeServiceRequests(get().serviceRequests, remote);
+        set({ serviceRequests: merged });
+        // Notify admin about brand-new remote requests
+        for (const r of remote) {
+          if (!prevIds.has(r.id) && r.status === "new") {
+            get().addNotification({
+              kind: "system",
+              title: "New service request",
+              body: `${r.clientName} · ${r.title}${r.budget ? ` · $${Number(r.budget).toLocaleString()}` : ""}`,
+              link: "/service-requests",
+            });
+          }
+        }
+      },
 
       addClientReport: (r) => {
         const item: ClientReport = {
