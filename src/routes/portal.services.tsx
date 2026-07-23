@@ -100,7 +100,7 @@ function PortalServices() {
   const requestFromProduct = (id: string) => {
     setSelected(id);
     const p = products.find((x) => x.id === id);
-    setForm({ title: p ? `Book: ${p.name}` : "", description: p?.description ?? "", budget: String(p?.meta?.price ?? "") });
+    setForm({ title: p ? `Request: ${p.name}` : "", description: p?.description ?? "", budget: "" });
     setErrors({});
     setCustomOpen(true);
   };
