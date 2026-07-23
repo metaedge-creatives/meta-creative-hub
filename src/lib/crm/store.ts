@@ -43,6 +43,12 @@ import {
   fetchAllClientUsers,
   mergeClientUsers,
 } from "./cloudSync";
+import {
+  pushServiceRequest,
+  deleteServiceRequestRemote,
+  fetchAllServiceRequests,
+  mergeServiceRequests,
+} from "./serviceRequestsSync";
 
 const EMPTY_LIST: ListItem[] = [];
 
