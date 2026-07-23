@@ -1400,6 +1400,81 @@ const DEFAULT_CREDS: IntegrationCreds = {
   calendly: { enabled: false, schedulingUrl: "", personalToken: "", eventTypeUri: "" },
 };
 
+type CredErrors = {
+  stripe: Partial<Record<"publishableKey" | "secretKey" | "webhookSecret", string>>;
+  resend: Partial<Record<"apiKey" | "fromEmail" | "fromName" | "replyTo", string>>;
+  calendly: Partial<Record<"schedulingUrl" | "personalToken" | "eventTypeUri", string>>;
+};
+
+const emptyErrors: CredErrors = { stripe: {}, resend: {}, calendly: {} };
+const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateCreds(d: IntegrationCreds): { errors: CredErrors; hasError: boolean } {
+  const errors: CredErrors = { stripe: {}, resend: {}, calendly: {} };
+
+  if (d.stripe.enabled) {
+    const pk = d.stripe.publishableKey.trim();
+    const sk = d.stripe.secretKey.trim();
+    const wh = d.stripe.webhookSecret.trim();
+    const expectPk = d.stripe.mode === "live" ? "pk_live_" : "pk_test_";
+    const expectSk = d.stripe.mode === "live" ? "sk_live_" : "sk_test_";
+    if (!pk) errors.stripe.publishableKey = "Publishable key is required.";
+    else if (!pk.startsWith(expectPk)) errors.stripe.publishableKey = `Must start with "${expectPk}" for ${d.stripe.mode} mode.`;
+    if (!sk) errors.stripe.secretKey = "Secret key is required.";
+    else if (!sk.startsWith(expectSk)) errors.stripe.secretKey = `Must start with "${expectSk}" for ${d.stripe.mode} mode.`;
+    else if (sk.startsWith("pk_")) errors.stripe.secretKey = "This looks like a publishable key — paste the secret key instead.";
+    if (wh && !wh.startsWith("whsec_")) errors.stripe.webhookSecret = 'Must start with "whsec_".';
+  }
+
+  if (d.resend.enabled) {
+    const key = d.resend.apiKey.trim();
+    const from = d.resend.fromEmail.trim();
+    const reply = d.resend.replyTo.trim();
+    if (!key) errors.resend.apiKey = "API key is required.";
+    else if (!key.startsWith("re_")) errors.resend.apiKey = 'Resend API keys start with "re_".';
+    if (!d.resend.fromName.trim()) errors.resend.fromName = "From name is required.";
+    if (!from) errors.resend.fromEmail = "From email is required.";
+    else if (!emailRe.test(from)) errors.resend.fromEmail = "Enter a valid email address.";
+    if (reply && !emailRe.test(reply)) errors.resend.replyTo = "Enter a valid email address.";
+  }
+
+  if (d.calendly.enabled) {
+    const url = d.calendly.schedulingUrl.trim();
+    const token = d.calendly.personalToken.trim();
+    const evt = d.calendly.eventTypeUri.trim();
+    if (!url) errors.calendly.schedulingUrl = "Scheduling URL is required.";
+    else {
+      try {
+        const u = new URL(url);
+        if (u.protocol !== "https:") errors.calendly.schedulingUrl = "URL must use https://.";
+        else if (!/(^|\.)calendly\.com$/i.test(u.hostname)) errors.calendly.schedulingUrl = "URL must be on calendly.com.";
+        else if (u.pathname === "/" || u.pathname === "") errors.calendly.schedulingUrl = "Include your handle, e.g. calendly.com/your-handle/intro.";
+      } catch {
+        errors.calendly.schedulingUrl = "Enter a valid URL (https://calendly.com/…).";
+      }
+    }
+    if (token && token.length < 20) errors.calendly.personalToken = "Token looks too short — copy the full personal access token.";
+    if (evt) {
+      try {
+        const u = new URL(evt);
+        if (!/api\.calendly\.com$/i.test(u.hostname) || !u.pathname.startsWith("/event_types/")) {
+          errors.calendly.eventTypeUri = "Must look like https://api.calendly.com/event_types/…";
+        }
+      } catch {
+        errors.calendly.eventTypeUri = "Enter a valid Calendly event type URI.";
+      }
+    }
+  }
+
+  const hasError = (Object.keys(errors) as (keyof CredErrors)[]).some((k) => Object.keys(errors[k]).length > 0);
+  return { errors, hasError };
+}
+
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null;
+  return <p className="mt-1 text-[11px] font-semibold text-primary">{msg}</p>;
+}
+
 function IntegrationCredentialsSection() {
   const stored = useCRM((s) => s.moduleSettings["integrations.credentials"]) as Partial<IntegrationCreds> | undefined;
   const setSettings = useCRM((s) => s.setSettings);
@@ -1410,11 +1485,27 @@ function IntegrationCredentialsSection() {
   }), [stored]);
   const [draft, setDraft] = useState<IntegrationCreds>(initial);
   const [savedAt, setSavedAt] = useState<number | null>(null);
+  const [errors, setErrors] = useState<CredErrors>(emptyErrors);
+  const [attempted, setAttempted] = useState(false);
   useEffect(() => { setDraft(initial); }, [initial]);
+
+  const liveValidation = useMemo(() => validateCreds(draft), [draft]);
+  const shown = attempted ? liveValidation.errors : errors;
   const dirty = JSON.stringify(draft) !== JSON.stringify(initial);
+
   const save = () => {
+    const v = validateCreds(draft);
+    setErrors(v.errors);
+    setAttempted(true);
+    if (v.hasError) {
+      toast.error("Please fix the highlighted fields before saving.");
+      return;
+    }
     setSettings("integrations.credentials", draft);
     setSavedAt(Date.now());
+    setAttempted(false);
+    setErrors(emptyErrors);
+    toast.success("Integration credentials saved.");
     setTimeout(() => setSavedAt(null), 1800);
   };
 
@@ -1426,7 +1517,7 @@ function IntegrationCredentialsSection() {
           <div>
             Save your provider credentials here now — the live wiring for Stripe checkout, Resend email sending,
             and Calendly booking sync can be turned on later without re-entering keys. Values are stored only in
-            this browser until you connect a backend.
+            this browser until you connect a backend. Validation runs only for providers you have enabled.
           </div>
         </div>
       </div>
@@ -1451,9 +1542,21 @@ function IntegrationCredentialsSection() {
               </SelectContent>
             </Select>
           </div>
-          <div><Label>Publishable key</Label><Input value={draft.stripe.publishableKey} onChange={(e) => setDraft({ ...draft, stripe: { ...draft.stripe, publishableKey: e.target.value } })} placeholder="pk_test_…" /></div>
-          <div><Label>Secret key</Label><Input type="password" value={draft.stripe.secretKey} onChange={(e) => setDraft({ ...draft, stripe: { ...draft.stripe, secretKey: e.target.value } })} placeholder="sk_test_…" /></div>
-          <div><Label>Webhook signing secret</Label><Input type="password" value={draft.stripe.webhookSecret} onChange={(e) => setDraft({ ...draft, stripe: { ...draft.stripe, webhookSecret: e.target.value } })} placeholder="whsec_…" /></div>
+          <div>
+            <Label>Publishable key</Label>
+            <Input aria-invalid={!!shown.stripe.publishableKey} value={draft.stripe.publishableKey} onChange={(e) => setDraft({ ...draft, stripe: { ...draft.stripe, publishableKey: e.target.value } })} placeholder={draft.stripe.mode === "live" ? "pk_live_…" : "pk_test_…"} />
+            <FieldError msg={shown.stripe.publishableKey} />
+          </div>
+          <div>
+            <Label>Secret key</Label>
+            <Input aria-invalid={!!shown.stripe.secretKey} type="password" value={draft.stripe.secretKey} onChange={(e) => setDraft({ ...draft, stripe: { ...draft.stripe, secretKey: e.target.value } })} placeholder={draft.stripe.mode === "live" ? "sk_live_…" : "sk_test_…"} />
+            <FieldError msg={shown.stripe.secretKey} />
+          </div>
+          <div>
+            <Label>Webhook signing secret</Label>
+            <Input aria-invalid={!!shown.stripe.webhookSecret} type="password" value={draft.stripe.webhookSecret} onChange={(e) => setDraft({ ...draft, stripe: { ...draft.stripe, webhookSecret: e.target.value } })} placeholder="whsec_…" />
+            <FieldError msg={shown.stripe.webhookSecret} />
+          </div>
         </div>
       </div>
 
@@ -1467,10 +1570,26 @@ function IntegrationCredentialsSection() {
           <Switch checked={draft.resend.enabled} onCheckedChange={(v) => setDraft({ ...draft, resend: { ...draft.resend, enabled: v } })} />
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="md:col-span-2"><Label>API key</Label><Input type="password" value={draft.resend.apiKey} onChange={(e) => setDraft({ ...draft, resend: { ...draft.resend, apiKey: e.target.value } })} placeholder="re_…" /></div>
-          <div><Label>From name</Label><Input value={draft.resend.fromName} onChange={(e) => setDraft({ ...draft, resend: { ...draft.resend, fromName: e.target.value } })} /></div>
-          <div><Label>From email</Label><Input type="email" value={draft.resend.fromEmail} onChange={(e) => setDraft({ ...draft, resend: { ...draft.resend, fromEmail: e.target.value } })} placeholder="hello@metaedgecreatives.com" /></div>
-          <div className="md:col-span-2"><Label>Reply-to (optional)</Label><Input type="email" value={draft.resend.replyTo} onChange={(e) => setDraft({ ...draft, resend: { ...draft.resend, replyTo: e.target.value } })} /></div>
+          <div className="md:col-span-2">
+            <Label>API key</Label>
+            <Input aria-invalid={!!shown.resend.apiKey} type="password" value={draft.resend.apiKey} onChange={(e) => setDraft({ ...draft, resend: { ...draft.resend, apiKey: e.target.value } })} placeholder="re_…" />
+            <FieldError msg={shown.resend.apiKey} />
+          </div>
+          <div>
+            <Label>From name</Label>
+            <Input aria-invalid={!!shown.resend.fromName} value={draft.resend.fromName} onChange={(e) => setDraft({ ...draft, resend: { ...draft.resend, fromName: e.target.value } })} />
+            <FieldError msg={shown.resend.fromName} />
+          </div>
+          <div>
+            <Label>From email</Label>
+            <Input aria-invalid={!!shown.resend.fromEmail} type="email" value={draft.resend.fromEmail} onChange={(e) => setDraft({ ...draft, resend: { ...draft.resend, fromEmail: e.target.value } })} placeholder="hello@metaedgecreatives.com" />
+            <FieldError msg={shown.resend.fromEmail} />
+          </div>
+          <div className="md:col-span-2">
+            <Label>Reply-to (optional)</Label>
+            <Input aria-invalid={!!shown.resend.replyTo} type="email" value={draft.resend.replyTo} onChange={(e) => setDraft({ ...draft, resend: { ...draft.resend, replyTo: e.target.value } })} />
+            <FieldError msg={shown.resend.replyTo} />
+          </div>
         </div>
       </div>
 
@@ -1484,9 +1603,21 @@ function IntegrationCredentialsSection() {
           <Switch checked={draft.calendly.enabled} onCheckedChange={(v) => setDraft({ ...draft, calendly: { ...draft.calendly, enabled: v } })} />
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="md:col-span-2"><Label>Scheduling URL</Label><Input value={draft.calendly.schedulingUrl} onChange={(e) => setDraft({ ...draft, calendly: { ...draft.calendly, schedulingUrl: e.target.value } })} placeholder="https://calendly.com/your-handle/consultation" /></div>
-          <div><Label>Personal access token (optional)</Label><Input type="password" value={draft.calendly.personalToken} onChange={(e) => setDraft({ ...draft, calendly: { ...draft.calendly, personalToken: e.target.value } })} placeholder="eyJraWQi…" /></div>
-          <div><Label>Event type URI (optional)</Label><Input value={draft.calendly.eventTypeUri} onChange={(e) => setDraft({ ...draft, calendly: { ...draft.calendly, eventTypeUri: e.target.value } })} placeholder="https://api.calendly.com/event_types/…" /></div>
+          <div className="md:col-span-2">
+            <Label>Scheduling URL</Label>
+            <Input aria-invalid={!!shown.calendly.schedulingUrl} value={draft.calendly.schedulingUrl} onChange={(e) => setDraft({ ...draft, calendly: { ...draft.calendly, schedulingUrl: e.target.value } })} placeholder="https://calendly.com/your-handle/consultation" />
+            <FieldError msg={shown.calendly.schedulingUrl} />
+          </div>
+          <div>
+            <Label>Personal access token (optional)</Label>
+            <Input aria-invalid={!!shown.calendly.personalToken} type="password" value={draft.calendly.personalToken} onChange={(e) => setDraft({ ...draft, calendly: { ...draft.calendly, personalToken: e.target.value } })} placeholder="eyJraWQi…" />
+            <FieldError msg={shown.calendly.personalToken} />
+          </div>
+          <div>
+            <Label>Event type URI (optional)</Label>
+            <Input aria-invalid={!!shown.calendly.eventTypeUri} value={draft.calendly.eventTypeUri} onChange={(e) => setDraft({ ...draft, calendly: { ...draft.calendly, eventTypeUri: e.target.value } })} placeholder="https://api.calendly.com/event_types/…" />
+            <FieldError msg={shown.calendly.eventTypeUri} />
+          </div>
         </div>
       </div>
 
