@@ -798,7 +798,7 @@ export const useCRM = create<CRMState & Actions>()(
         return v === undefined ? fallback : v;
       },
 
-      getList: (listKey) => get().lists[listKey] ?? [],
+      getList: (listKey) => get().lists[listKey] ?? EMPTY_LIST,
       addListItem: (listKey, item) => {
         const it: ListItem = { ...item, id: uid() };
         set((s) => ({
