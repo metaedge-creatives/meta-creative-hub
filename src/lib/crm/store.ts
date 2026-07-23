@@ -44,7 +44,7 @@ import {
   mergeClientUsers,
 } from "./cloudSync";
 
-const EMPTY_LIST: ListItem[] = Object.freeze([]) as ListItem[];
+const EMPTY_LIST: ListItem[] = [];
 
 const uid = () =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
