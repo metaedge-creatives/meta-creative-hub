@@ -192,11 +192,7 @@ function PortalServices() {
                 <div className="mt-1 text-[10px] font-black uppercase tracking-widest text-primary">{s.meta.category}</div>
               )}
               {s.description && <p className="mt-2 line-clamp-3 text-[12px]" style={{ color: "#666" }}>{s.description}</p>}
-              <div className="mt-auto flex items-center justify-between pt-4">
-                <div className="text-lg font-black">
-                  {s.meta?.price ? `$${Number(s.meta.price).toLocaleString()}` : <span className="text-xs text-muted-foreground">Custom quote</span>}
-                  {s.meta?.unit && <span className="text-[11px] font-bold text-muted-foreground"> / {s.meta.unit}</span>}
-                </div>
+              <div className="mt-auto flex justify-end pt-4">
                 <Button size="sm" onClick={() => requestFromProduct(s.id)}><Send className="h-3.5 w-3.5" /> Request</Button>
               </div>
             </div>
