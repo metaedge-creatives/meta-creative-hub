@@ -83,7 +83,7 @@ function PortalServices() {
       id: `default-${s.name.toLowerCase().replace(/\s+/g, "-")}`,
       name: s.name,
       description: s.description,
-      meta: { category: s.category, price: s.price, unit: s.unit },
+      meta: { category: s.category },
     })) as any[];
   }, [products]);
 
