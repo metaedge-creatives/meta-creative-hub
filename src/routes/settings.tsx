@@ -1388,7 +1388,124 @@ function IntegrationsSection() {
   );
 }
 
-/* -------- Cloud Sync -------- */
+/* -------- Integration Credentials (Stripe / Resend / Calendly) -------- */
+type IntegrationCreds = {
+  stripe: { enabled: boolean; publishableKey: string; secretKey: string; webhookSecret: string; mode: "test" | "live" };
+  resend: { enabled: boolean; apiKey: string; fromEmail: string; fromName: string; replyTo: string };
+  calendly: { enabled: boolean; schedulingUrl: string; personalToken: string; eventTypeUri: string };
+};
+const DEFAULT_CREDS: IntegrationCreds = {
+  stripe: { enabled: false, publishableKey: "", secretKey: "", webhookSecret: "", mode: "test" },
+  resend: { enabled: false, apiKey: "", fromEmail: "", fromName: "MetaEdge Creatives", replyTo: "" },
+  calendly: { enabled: false, schedulingUrl: "", personalToken: "", eventTypeUri: "" },
+};
+
+function IntegrationCredentialsSection() {
+  const stored = useCRM((s) => s.moduleSettings["integrations.credentials"]) as Partial<IntegrationCreds> | undefined;
+  const setSettings = useCRM((s) => s.setSettings);
+  const initial: IntegrationCreds = useMemo(() => ({
+    stripe: { ...DEFAULT_CREDS.stripe, ...(stored?.stripe ?? {}) },
+    resend: { ...DEFAULT_CREDS.resend, ...(stored?.resend ?? {}) },
+    calendly: { ...DEFAULT_CREDS.calendly, ...(stored?.calendly ?? {}) },
+  }), [stored]);
+  const [draft, setDraft] = useState<IntegrationCreds>(initial);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
+  useEffect(() => { setDraft(initial); }, [initial]);
+  const dirty = JSON.stringify(draft) !== JSON.stringify(initial);
+  const save = () => {
+    setSettings("integrations.credentials", draft);
+    setSavedAt(Date.now());
+    setTimeout(() => setSavedAt(null), 1800);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-xl border border-divider bg-primary/5 p-4 text-[12px]" style={{ color: "#666" }}>
+        <div className="flex items-start gap-2">
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+          <div>
+            Save your provider credentials here now — the live wiring for Stripe checkout, Resend email sending,
+            and Calendly booking sync can be turned on later without re-entering keys. Values are stored only in
+            this browser until you connect a backend.
+          </div>
+        </div>
+      </div>
+
+      {/* Stripe */}
+      <div className="rounded-2xl border border-divider bg-card p-6 brand-shadow">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <div className="text-sm font-black">Stripe · Payments</div>
+            <div className="text-[11px]" style={{ color: "#999" }}>Collect invoice payments and manage subscriptions.</div>
+          </div>
+          <Switch checked={draft.stripe.enabled} onCheckedChange={(v) => setDraft({ ...draft, stripe: { ...draft.stripe, enabled: v } })} />
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <Label>Mode</Label>
+            <Select value={draft.stripe.mode} onValueChange={(v) => setDraft({ ...draft, stripe: { ...draft.stripe, mode: v as "test" | "live" } })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="test">Test mode</SelectItem>
+                <SelectItem value="live">Live mode</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div><Label>Publishable key</Label><Input value={draft.stripe.publishableKey} onChange={(e) => setDraft({ ...draft, stripe: { ...draft.stripe, publishableKey: e.target.value } })} placeholder="pk_test_…" /></div>
+          <div><Label>Secret key</Label><Input type="password" value={draft.stripe.secretKey} onChange={(e) => setDraft({ ...draft, stripe: { ...draft.stripe, secretKey: e.target.value } })} placeholder="sk_test_…" /></div>
+          <div><Label>Webhook signing secret</Label><Input type="password" value={draft.stripe.webhookSecret} onChange={(e) => setDraft({ ...draft, stripe: { ...draft.stripe, webhookSecret: e.target.value } })} placeholder="whsec_…" /></div>
+        </div>
+      </div>
+
+      {/* Resend */}
+      <div className="rounded-2xl border border-divider bg-card p-6 brand-shadow">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <div className="text-sm font-black">Resend · Email</div>
+            <div className="text-[11px]" style={{ color: "#999" }}>Transactional email for invoices, notifications, and OTPs.</div>
+          </div>
+          <Switch checked={draft.resend.enabled} onCheckedChange={(v) => setDraft({ ...draft, resend: { ...draft.resend, enabled: v } })} />
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="md:col-span-2"><Label>API key</Label><Input type="password" value={draft.resend.apiKey} onChange={(e) => setDraft({ ...draft, resend: { ...draft.resend, apiKey: e.target.value } })} placeholder="re_…" /></div>
+          <div><Label>From name</Label><Input value={draft.resend.fromName} onChange={(e) => setDraft({ ...draft, resend: { ...draft.resend, fromName: e.target.value } })} /></div>
+          <div><Label>From email</Label><Input type="email" value={draft.resend.fromEmail} onChange={(e) => setDraft({ ...draft, resend: { ...draft.resend, fromEmail: e.target.value } })} placeholder="hello@metaedgecreatives.com" /></div>
+          <div className="md:col-span-2"><Label>Reply-to (optional)</Label><Input type="email" value={draft.resend.replyTo} onChange={(e) => setDraft({ ...draft, resend: { ...draft.resend, replyTo: e.target.value } })} /></div>
+        </div>
+      </div>
+
+      {/* Calendly */}
+      <div className="rounded-2xl border border-divider bg-card p-6 brand-shadow">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <div className="text-sm font-black">Calendly · Bookings</div>
+            <div className="text-[11px]" style={{ color: "#999" }}>Let clients book consultations directly from the portal.</div>
+          </div>
+          <Switch checked={draft.calendly.enabled} onCheckedChange={(v) => setDraft({ ...draft, calendly: { ...draft.calendly, enabled: v } })} />
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="md:col-span-2"><Label>Scheduling URL</Label><Input value={draft.calendly.schedulingUrl} onChange={(e) => setDraft({ ...draft, calendly: { ...draft.calendly, schedulingUrl: e.target.value } })} placeholder="https://calendly.com/your-handle/consultation" /></div>
+          <div><Label>Personal access token (optional)</Label><Input type="password" value={draft.calendly.personalToken} onChange={(e) => setDraft({ ...draft, calendly: { ...draft.calendly, personalToken: e.target.value } })} placeholder="eyJraWQi…" /></div>
+          <div><Label>Event type URI (optional)</Label><Input value={draft.calendly.eventTypeUri} onChange={(e) => setDraft({ ...draft, calendly: { ...draft.calendly, eventTypeUri: e.target.value } })} placeholder="https://api.calendly.com/event_types/…" /></div>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <p className="text-[11px]" style={{ color: "#999" }}>
+          Credentials are stored only in this browser. Ask us to wire the live backend when you're ready to go live.
+        </p>
+        <div className="flex items-center gap-3">
+          {dirty && <span className="text-[11px] font-bold text-primary">Unsaved changes</span>}
+          <Button onClick={save} disabled={!dirty} className="font-bold">
+            {savedAt ? "Saved ✓" : "Save changes"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 function CloudSyncSection() {
   const hydrate = useCRM((s) => s.hydrateClientUsersFromCloud);
   const clientCount = useCRM((s) => s.clientUsers.length);
